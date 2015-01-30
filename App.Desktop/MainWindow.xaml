@@ -2,6 +2,7 @@
         x:Name="AppWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:view="clr-namespace:Walle.View"
         Title="Walle" Height="564" Width="792">
     <Window.Resources>
         <SolidColorBrush x:Key="MenuGray" Color="#FFF0F0F0"/>
@@ -52,11 +53,11 @@
             </Button>
         </StackPanel>
         <DockPanel Background="Gray">
-            <Image x:Name="MainImage" Margin="20" MouseMove="MainImage_OnMouseMove" MouseLeave="MainImage_OnMouseLeave">
-                <Image.Effect>
+            <view:CanvasHost x:Name="MainCanvas" Visibility="Visible" Margin="20" MouseMove="MainImage_OnMouseMove" MouseLeave="MainImage_OnMouseLeave">
+                <view:CanvasHost.Effect>
                     <DropShadowEffect ShadowDepth="0" BlurRadius="30" Opacity="0.55" />
-                </Image.Effect>
-            </Image>
+                </view:CanvasHost.Effect>
+            </view:CanvasHost>
         </DockPanel>
     </DockPanel>
 </Window>

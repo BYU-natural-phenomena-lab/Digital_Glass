@@ -27,19 +27,14 @@ namespace Walle
             var result = dialog.ShowDialog();
             if (result == true)
             {
-                MainImage.Source = new BitmapImage(new Uri(dialog.FileName));
+                MainCanvas.Source = new BitmapImage(new Uri(dialog.FileName));
             }
-
-        }
-
-        private void MainImage_OnMouseDown(object sender, MouseButtonEventArgs e)
-        {
 
         }
 
         private void CloseFileCommand_OnClick(object sender, RoutedEventArgs e)
         {
-            MainImage.Source = null;
+            MainCanvas.Source = null;
         }
 
         private void QuitCommand_OnClick(object sender, RoutedEventArgs e)
