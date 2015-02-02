@@ -16,6 +16,12 @@ namespace Walle.ViewModel
         private IReadOnlyCollection<CommandViewModel> _commands;
         private string _coordinates;
         private CanvasHostViewModel _canvasHost;
+
+        public MainWindowViewModel()
+        {
+            _commands = new ReadOnlyCollection<CommandViewModel>(CreateCommands());
+        }
+
         public event Action RequestClose;
 
         public CanvasHostViewModel CanvasHost
@@ -41,10 +47,6 @@ namespace Walle.ViewModel
         {
             get
             {
-                if (_commands == null)
-                {
-                    _commands = new ReadOnlyCollection<CommandViewModel>(CreateCommands());
-                }
                 return _commands;
             }
         }
@@ -67,7 +69,8 @@ namespace Walle.ViewModel
 
         private void CloseFile()
         {
-            throw new NotImplementedException();
+            CanvasHost = null;
+            CanClose = false;
         }
 
         public bool CanClose { get; set; }
@@ -79,7 +82,8 @@ namespace Walle.ViewModel
             var result = dialog.ShowDialog();
             if (result == true)
             {
-                CanvasHost = new CanvasHostViewModel(new BitmapImage(new Uri(dialog.FileName)));
+                CanvasHost = new CanvasHostViewModel(new Uri(dialog.FileName));
+                CanClose = true;
             }
         }
 

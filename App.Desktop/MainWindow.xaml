@@ -30,7 +30,7 @@
             </Button>
         </StackPanel>
         <DockPanel Background="Gray">
-            <view:CanvasHost x:Name="MainCanvas" Visibility="Visible" Margin="20" DataContext="{Binding Path=CanvasHost}" Source="{Binding Path=Source}">
+            <view:CanvasHost x:Name="MainCanvas" Visibility="Visible" Margin="20" DataContext="{Binding Path=CanvasHost}">
                 <view:CanvasHost.Effect>
                     <DropShadowEffect ShadowDepth="0" BlurRadius="30" Opacity="0.55" />
                 </view:CanvasHost.Effect>
