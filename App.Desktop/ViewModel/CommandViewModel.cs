@@ -15,6 +15,12 @@ namespace Walle.ViewModel
             this.Command = command;
         }
 
+        public CommandViewModel(string displayName, ICommand command)
+            :this(displayName,null,command)
+        {
+            
+        }
+
         public string ImageUri { get; private set; }
 
         public ICommand Command { get; private set; }

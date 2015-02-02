@@ -1,0 +1,42 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:vm="clr-namespace:Walle.ViewModel">
+
+    <SolidColorBrush x:Key="MenuGray" Color="#FFF0F0F0"/>
+    <Style x:Key="ToolbarButtonStyle" TargetType="Button">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Name="border" Background="Transparent" BorderThickness="1" BorderBrush="Black">
+                        <ContentPresenter/>
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Button.IsPressed" Value="True">
+                            <Setter TargetName="border" Property="BorderBrush" Value="Transparent" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+    </Style>
+
+
+    <DataTemplate x:Key="CommandButtonTemplate" DataType="vm:CommandViewModel">
+        <Button Command="{Binding Path=Command}">
+            <Image Source="{Binding Path=ImageUri}" Height="32" Width="32" />
+        </Button>
+    </DataTemplate>
+
+    <Style x:Key="MenuItemTemplate" TargetType="MenuItem">
+        <Setter Property="Command" Value="{Binding Path=(vm:CommandViewModel.Command)}"></Setter>
+        <Setter Property="Header" Value="{Binding Path=(vm:ViewModelBase.DisplayName)}"></Setter>
+        <Setter Property="Icon">
+            <Setter.Value>
+                <Image Source="{Binding Path=(vm:CommandViewModel.ImageUri)}" Height="16" Width="16"/>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>
