@@ -47,6 +47,7 @@ namespace Walle.ViewModel
         public int ImageHeight { get { return _image.Height; }}
 
         private uint _tolerance;
+        private bool _processing;
 
         public event OutlineDiscoveredHandler OutlineDiscovered;
 
@@ -54,8 +55,21 @@ namespace Walle.ViewModel
         {
             var pt = new System.Drawing.Point((int) startClick.X, (int) startClick.Y);
             var finder = new RegionFinder(_image, pt, Tolerance);
+            Processing = true;
             var outline = finder.Process();
+            Processing = false;
             OnOutlineDiscovered(outline);
+        }
+
+        public bool Processing
+        {
+            get { return _processing; }
+            set
+            {
+                if (value.Equals(_processing)) return;
+                _processing = value;
+                OnPropertyChanged();
+            }
         }
 
         protected virtual void OnOutlineDiscovered(Point[] points)

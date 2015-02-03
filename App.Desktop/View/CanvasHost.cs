@@ -85,6 +85,10 @@ namespace Walle.View
             {
                 this.UpdateImage(_viewModel);
             }
+            else if (e.PropertyName == "Processing")
+            {
+                UiServices.SetBusyState();
+            }
         }
 
         private void UpdateImage(CanvasHostViewModel vm)
@@ -131,7 +135,8 @@ namespace Walle.View
 
             // Retreive the coordinates of the mouse button event.
             var endClick = e.GetPosition((UIElement) sender);
-            _viewModel.Act(StartClick.Value, endClick);
+            if(!_viewModel.Processing)
+                _viewModel.Act(StartClick.Value, endClick);
             // Initiate the hit test by setting up a hit test result callback method.
 //            VisualTreeHelper.HitTest(this, null, result => ResultCallback(result, StartClick.Value, pt),
 //                new PointHitTestParameters(StartClick.Value));
