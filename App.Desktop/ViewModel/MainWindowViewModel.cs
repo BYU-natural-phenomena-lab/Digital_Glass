@@ -103,5 +103,7 @@ namespace Walle.ViewModel
                 OnPropertyChanged();
             }
         }
+
+
     }
 }

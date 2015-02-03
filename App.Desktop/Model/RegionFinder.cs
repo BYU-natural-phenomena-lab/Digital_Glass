@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
 
@@ -7,91 +8,83 @@ namespace Walle.Model
 {
     public class RegionFinder
     {
-        private Queue<Point> _queue;
+        private Queue<Point> _queue = new Queue<Point>();
         private Bitmap _image;
         private readonly double _toleranceSquared;
         private Color _baseColor;
-        private HashSet<Point> _considered;
+        private HashSet<ulong> _considered = new HashSet<ulong>();
 
         public RegionFinder(Bitmap image, Point startPoint, uint tolerance)
         {
-            _image = image;
-            _queue = new Queue<Point>();
-            _considered = new HashSet<Point>(new PointComparer());
-            _baseColor = image.GetPixel(startPoint.X, startPoint.Y);
-            _queue.Enqueue(startPoint);
-            _considered.Add(startPoint);
+            try
+            {
+                _baseColor = image.GetPixel(startPoint.X, startPoint.Y);
+                _image = image;
+                _queue.Enqueue(startPoint);
+                _considered.Add(F(startPoint.X, startPoint.Y));
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
             _toleranceSquared = Math.Pow(tolerance, 2);
         }
+
+        private ulong F(int x, int y)
+        {
+            return (uint) y | ((ulong) x << 32);
+        }
+
+
         public Point[] Process()
         {
             var outside = new List<Point>();
-            
+
             while (_queue.Count > 0)
             {
                 var start = _queue.Dequeue();
 
-                var tl = new Point(start.X - 1, start.Y - 1);
-                if (IsEdge(tl)) 
-                    outside.Add(tl); 
+                if (IsEdge(start.X - 1, start.Y - 1))
+                    outside.Add(new Point(start.X - 1, start.Y - 1));
 
-                var left = new Point(start.X - 1, start.Y);
-                if (IsEdge(left)) 
-                    outside.Add(left); 
+                if (IsEdge(start.X - 1, start.Y))
+                    outside.Add(new Point(start.X - 1, start.Y));
 
-                var bl = new Point(start.X - 1, start.Y + 1);
-                if (IsEdge(bl)) 
-                    outside.Add(bl);
+                if (IsEdge(start.X - 1, start.Y + 1))
+                    outside.Add(new Point(start.X - 1, start.Y + 1));
 
-                var btm = new Point(start.X, start.Y + 1);
-                if (IsEdge(btm)) 
-                    outside.Add(btm); 
+                if (IsEdge(start.X, start.Y + 1))
+                    outside.Add(new Point(start.X, start.Y + 1));
 
-                var br = new Point(start.X + 1, start.Y + 1);
-                if (IsEdge(br)) 
-                    outside.Add(br); 
+                if (IsEdge(start.X + 1, start.Y + 1))
+                    outside.Add(new Point(start.X + 1, start.Y + 1));
 
-                var right = new Point(start.X + 1, start.Y);
-                if (IsEdge(right)) 
-                    outside.Add(right); 
+                if (IsEdge(start.X + 1, start.Y))
+                    outside.Add(new Point(start.X + 1, start.Y));
 
-                var tr = new Point(start.X + 1, start.Y - 1);
-                if (IsEdge(tr)) 
-                    outside.Add(tr);
+                if (IsEdge(start.X + 1, start.Y - 1))
+                    outside.Add(new Point(start.X + 1, start.Y - 1));
 
-                var top = new Point(start.X, start.Y - 1);
-                if (IsEdge(top)) 
-                    outside.Add(top);
+                if (IsEdge(start.X, start.Y - 1))
+                    outside.Add(new Point(start.X, start.Y - 1));
 
             }
             return outside.ToArray();
         }
 
-        public class PointComparer : IEqualityComparer<Point>
+        private bool IsEdge(int x, int y)
         {
-            public bool Equals(Point x, Point y)
-            {
-                return x.Equals(y);
-            }
-
-            public int GetHashCode(Point obj)
-            {
-                return obj.X.GetHashCode()*31+obj.Y.GetHashCode();
-            }
-        }
-
-        private bool IsEdge(Point point)
-        {
-            if (_considered.Contains(point))
+            var h = F(x, y);
+            if (_considered.Contains(h))
                 return false;
-            _considered.Add(point);
-            if (point.X < 0 || point.X >= _image.Width) return true;
-            if (point.Y < 0 || point.Y >= _image.Height) return true;
-            var color = _image.GetPixel(point.X, point.Y);
+            _considered.Add(h);
+            if (x < 0 || x >= _image.Width) return true;
+            if (y < 0 || y >= _image.Height) return true;
+            var color = _image.GetPixel(x, y);
             var distSqr = Math.Pow(_baseColor.R - color.R, 2) + Math.Pow(_baseColor.G - color.G, 2) + Math.Pow(_baseColor.B - color.B, 2);
             if (distSqr > _toleranceSquared)
                 return true;
-            _queue.Enqueue(point);
+            _queue.Enqueue(new Point(x, y));
             return false;
         }
     }

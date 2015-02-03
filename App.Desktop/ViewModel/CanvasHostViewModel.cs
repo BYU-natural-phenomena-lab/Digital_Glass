@@ -18,6 +18,7 @@ namespace Walle.ViewModel
         {
             this.ImageSource = new BitmapImage(uri);
             _image = new Bitmap(uri.LocalPath);
+            Tolerance = 30;
         }
 
         public ImageSource ImageSource
@@ -31,12 +32,28 @@ namespace Walle.ViewModel
             }
         }
 
+        public uint Tolerance
+        {
+            get { return _tolerance; }
+            set
+            {
+                if (value == _tolerance) return;
+                _tolerance = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int ImageWidth { get { return _image.Width; }}
+        public int ImageHeight { get { return _image.Height; }}
+
+        private uint _tolerance;
+
         public event OutlineDiscoveredHandler OutlineDiscovered;
 
         public void Act(System.Windows.Point startClick, System.Windows.Point endClick)
         {
             var pt = new System.Drawing.Point((int) startClick.X, (int) startClick.Y);
-            var finder = new RegionFinder(_image, pt, 20);
+            var finder = new RegionFinder(_image, pt, Tolerance);
             var outline = finder.Process();
             OnOutlineDiscovered(outline);
         }

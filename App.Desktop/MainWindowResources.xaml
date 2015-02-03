@@ -40,5 +40,6 @@
         </Setter>
     </Style>
   
+    <view:UintConverter x:Key="UintConverter"/>
 
 </ResourceDictionary>

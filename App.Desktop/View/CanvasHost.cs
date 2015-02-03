@@ -26,6 +26,18 @@ namespace Walle.View
             this.DataContextChanged += CanvasHost_DataContextChanged;
         }
 
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            if(_viewModel ==null || _viewModel.ImageSource == null)
+                return new Size(0,0);
+            return new Size(_viewModel.ImageWidth, _viewModel.ImageHeight);
+        }
+
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            return ArrangeOverride(availableSize);
+        }
+
         private void CanvasHost_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             var oldDc = e.OldValue as CanvasHostViewModel;
@@ -44,7 +56,7 @@ namespace Walle.View
             _viewModel.PropertyChanged += ViewModelPropertyChanged;
             _viewModel.OutlineDiscovered += DrawOutline;
             if (_viewModel.ImageSource != null)
-                UpdateImage(_viewModel.ImageSource);
+                UpdateImage(_viewModel);
         }
 
         private void DrawOutline(object sender, System.Drawing.Point[] points)
@@ -53,7 +65,7 @@ namespace Walle.View
             var dc = dv.RenderOpen();
             foreach (var pt in points)
             {
-                dc.DrawRectangle(Brushes.Red, new Pen(Brushes.Tomato,1),new Rect(new Point(pt.X,pt.Y),new Vector(1,1)) );
+                dc.DrawRectangle(Brushes.Red,null,new Rect(new Point(pt.X,pt.Y),new Vector(1,1)) );
             }
             dc.Close();
             _children.Add(dv);
@@ -71,15 +83,15 @@ namespace Walle.View
         {
             if (e.PropertyName == "ImageSource")
             {
-                this.UpdateImage(_viewModel.ImageSource);
+                this.UpdateImage(_viewModel);
             }
         }
 
-        private void UpdateImage(ImageSource source)
+        private void UpdateImage(CanvasHostViewModel vm)
         {
             var dv = new DrawingVisual();
             var dc = dv.RenderOpen();
-            dc.DrawImage(source, new Rect(new Size(400, 400)));
+            dc.DrawImage(vm.ImageSource, new Rect(new Size(vm.ImageWidth,vm.ImageHeight)));
             dc.Close();
             _children.Add(dv);
             this.InvalidateVisual();
