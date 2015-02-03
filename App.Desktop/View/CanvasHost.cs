@@ -16,6 +16,8 @@ namespace Walle.View
     {
         private VisualCollection _children;
         private CanvasHostViewModel _viewModel;
+        private DrawingVisual _bg;
+        private double _scale;
 
         public CanvasHost()
         {
@@ -28,14 +30,12 @@ namespace Walle.View
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            if(_viewModel ==null || _viewModel.ImageSource == null)
-                return new Size(0,0);
-            return new Size(_viewModel.ImageWidth, _viewModel.ImageHeight);
+            return MeasureArrangeHelper(finalSize);
         }
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            return ArrangeOverride(availableSize);
+            return MeasureArrangeHelper(availableSize);
         }
 
         private void CanvasHost_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -55,21 +55,45 @@ namespace Walle.View
                 return;
             _viewModel.PropertyChanged += ViewModelPropertyChanged;
             _viewModel.OutlineDiscovered += DrawOutline;
-            if (_viewModel.ImageSource != null)
-                UpdateImage(_viewModel);
+            _bg = new DrawingVisual();
+            _children.Add(_bg);
+             UpdateImage();
+        }
+
+        protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
+        {
+            base.OnRenderSizeChanged(sizeInfo);
+            if (_viewModel == null)
+                return;
+            _scale = sizeInfo.NewSize.Height/_viewModel.ImageHeight;
+            foreach (var child in _children)
+            {
+                var dv = child as DrawingVisual;
+                if (dv == null)
+                    continue;
+                dv.Transform = GetScaleTransform();
+            }
         }
 
         private void DrawOutline(object sender, System.Drawing.Point[] points)
         {
             var dv = new DrawingVisual();
+            dv.Transform = GetScaleTransform();
             var dc = dv.RenderOpen();
             foreach (var pt in points)
             {
-                dc.DrawRectangle(Brushes.Red,null,new Rect(new Point(pt.X,pt.Y),new Vector(1,1)) );
+                dc.DrawRectangle(Brushes.Red, null, new Rect(new Point(pt.X, pt.Y), new Vector(1, 1)));
             }
             dc.Close();
             _children.Add(dv);
             this.InvalidateVisual();
+        }
+
+
+        [NotNull]
+        private ScaleTransform GetScaleTransform()
+        {
+            return new ScaleTransform(_scale, _scale, 0, 0);
         }
 
 
@@ -83,7 +107,7 @@ namespace Walle.View
         {
             if (e.PropertyName == "ImageSource")
             {
-                this.UpdateImage(_viewModel);
+                this.UpdateImage();
             }
             else if (e.PropertyName == "Processing")
             {
@@ -91,19 +115,22 @@ namespace Walle.View
             }
         }
 
-        private void UpdateImage(CanvasHostViewModel vm)
+        private void UpdateImage()
         {
-            var dv = new DrawingVisual();
-            var dc = dv.RenderOpen();
-            dc.DrawImage(vm.ImageSource, new Rect(new Size(vm.ImageWidth,vm.ImageHeight)));
+            if (_viewModel == null || _viewModel.ImageSource == null || _bg==null)
+                return;
+            _bg.Transform = GetScaleTransform();
+            var dc = _bg.RenderOpen();
+            dc.DrawImage(_viewModel.ImageSource, new Rect(new Size(_viewModel.ImageWidth,_viewModel.ImageHeight)));
             dc.Close();
-            _children.Add(dv);
             this.InvalidateVisual();
         }
 
         private void CanvasHost_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            this.StartClick = e.GetPosition((UIElement) sender);
+            var pt = e.GetPosition((UIElement)sender);
+            var inverse = GetScaleTransform().Inverse;
+            if (inverse != null) this.StartClick = inverse.Transform(pt);
         }
 
 
@@ -132,42 +159,93 @@ namespace Walle.View
         {
             if (!StartClick.HasValue)
                 return;
-
+            if (_viewModel.Processing)
+                return;
             // Retreive the coordinates of the mouse button event.
-            var endClick = e.GetPosition((UIElement) sender);
-            if(!_viewModel.Processing)
+            var pt = e.GetPosition((UIElement)sender);
+            var inverse = GetScaleTransform().Inverse;
+            if (inverse != null)
+            {
+                var endClick = inverse.Transform(pt);
                 _viewModel.Act(StartClick.Value, endClick);
+            }
+
+
             // Initiate the hit test by setting up a hit test result callback method.
-//            VisualTreeHelper.HitTest(this, null, result => ResultCallback(result, StartClick.Value, pt),
-//                new PointHitTestParameters(StartClick.Value));
+            //            VisualTreeHelper.HitTest(this, null, result => ResultCallback(result, StartClick.Value, pt),
+            //                new PointHitTestParameters(StartClick.Value));
         }
 
-//        private HitTestResultBehavior ResultCallback(HitTestResult result, Point startPoint, Point endPoint)
-//        {
-//            if (result.VisualHit.GetType() == typeof (DrawingVisual))
-//            {
-//                // do something with visual
-//                var visual = (DrawingVisual) result.VisualHit;
-//                if (visual.Effect == null)
-//                {
-//                    visual.Effect = new BlurEffect()
-//                    {
-//                        Radius = 4
-//                    };
-//                }
-//                else
-//                {
-//                    visual.Effect = null;
-//                }
-//            }
-//            else
-//            {
-//                var distSqrd = Math.Sqrt(Math.Pow(endPoint.X - startPoint.X, 2) + Math.Pow(endPoint.Y - startPoint.Y, 2));
-//                _children.Add(CreateEllipse(startPoint, distSqrd));
-//            }
-//
-//            // Stop the hit test enumeration of objects in the visual tree. 
-//            return HitTestResultBehavior.Stop;
-//        }
+        //        private HitTestResultBehavior ResultCallback(HitTestResult result, Point startPoint, Point endPoint)
+        //        {
+        //            if (result.VisualHit.GetType() == typeof (DrawingVisual))
+        //            {
+        //                // do something with visual
+        //                var visual = (DrawingVisual) result.VisualHit;
+        //                if (visual.Effect == null)
+        //                {
+        //                    visual.Effect = new BlurEffect()
+        //                    {
+        //                        Radius = 4
+        //                    };
+        //                }
+        //                else
+        //                {
+        //                    visual.Effect = null;
+        //                }
+        //            }
+        //            else
+        //            {
+        //                var distSqrd = Math.Sqrt(Math.Pow(endPoint.X - startPoint.X, 2) + Math.Pow(endPoint.Y - startPoint.Y, 2));
+        //                _children.Add(CreateEllipse(startPoint, distSqrd));
+        //            }
+        //
+        //            // Stop the hit test enumeration of objects in the visual tree. 
+        //            return HitTestResultBehavior.Stop;
+        //        }
+        private Size MeasureArrangeHelper(Size inputSize)
+        {
+            if (_viewModel == null || _viewModel.ImageSource == null)
+                return new Size();
+            var naturalSize = new Size(_viewModel.ImageWidth, _viewModel.ImageHeight);
+
+
+            //get computed scale factor
+            Size scaleFactor = ComputeScaleFactor(inputSize, naturalSize);
+
+            // Returns our minimum size & sets DesiredSize.
+            return new Size(naturalSize.Width * scaleFactor.Width, naturalSize.Height * scaleFactor.Height);
+        }
+
+        private static Size ComputeScaleFactor(Size availableSize,
+                                               Size contentSize)
+        {
+            // Compute scaling factors to use for axes
+            double scaleX = 1.0;
+            double scaleY = 1.0;
+
+            bool isConstrainedWidth = !Double.IsPositiveInfinity(availableSize.Width);
+            bool isConstrainedHeight = !Double.IsPositiveInfinity(availableSize.Height);
+
+
+            // Compute scaling factors for both axes
+            scaleX = (contentSize.Width == 0) ? 0.0 : availableSize.Width / contentSize.Width;
+            scaleY = contentSize.Height == 0 ? 0.0 : availableSize.Height / contentSize.Height;
+
+            if (!isConstrainedWidth) scaleX = scaleY;
+            else if (!isConstrainedHeight) scaleY = scaleX;
+            else
+            {
+
+                double minscale = scaleX < scaleY ? scaleX : scaleY;
+                scaleX = scaleY = minscale;
+
+
+
+            }
+
+            return new Size(scaleX, scaleY);
+        }
+
     }
 }
