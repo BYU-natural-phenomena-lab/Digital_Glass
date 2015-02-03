@@ -29,14 +29,17 @@
                 <Image Source="Resources/folder_Open_32xLG.png" Height="32" Width="32" />
             </Button>
         </StackPanel>
-        <DockPanel DockPanel.Dock="Top" Background="WhiteSmoke" >
-            <StackPanel  Orientation="Horizontal" Margin="4">
+        <DockPanel DockPanel.Dock="Top" Background="WhiteSmoke">
+            <StackPanel Orientation="Horizontal" Margin="4">
                 <Label Height="26">Tolerance</Label>
-                <TextBox DataContext="{Binding Path=CanvasHost}" Text="{Binding Path=Tolerance,Mode=TwoWay,Converter={StaticResource UintConverter}, UpdateSourceTrigger=PropertyChanged}" Width="50" Height="20" TextAlignment="Right"></TextBox>
+                <TextBox DataContext="{Binding Path=CanvasHost}"
+                         Text="{Binding Path=Tolerance,Mode=TwoWay,Converter={StaticResource UintConverter}, UpdateSourceTrigger=PropertyChanged}"
+                         Width="50" Height="20" TextAlignment="Right" />
             </StackPanel>
         </DockPanel>
         <DockPanel Background="Gray">
-            <view:CanvasHost x:Name="MainCanvas" Visibility="Visible" Margin="20" DataContext="{Binding Path=CanvasHost}">
+            <view:CanvasHost x:Name="MainCanvas" Visibility="Visible" Margin="20"
+                             DataContext="{Binding Path=CanvasHost}">
                 <view:CanvasHost.Effect>
                     <DropShadowEffect ShadowDepth="0" BlurRadius="30" Opacity="0.55" />
                 </view:CanvasHost.Effect>

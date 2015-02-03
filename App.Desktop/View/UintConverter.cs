@@ -9,7 +9,7 @@ using System.Windows.Data;
 
 namespace Walle.View
 {
-    class UintConverter : IValueConverter
+    internal class UintConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -20,7 +20,7 @@ namespace Walle.View
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             uint integer;
-            if(uint.TryParse(value.ToString(), out integer))
+            if (uint.TryParse(value.ToString(), out integer))
                 return integer;
             return 0;
         }

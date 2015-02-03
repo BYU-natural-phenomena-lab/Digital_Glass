@@ -45,10 +45,7 @@ namespace Walle.ViewModel
         [UsedImplicitly]
         public IReadOnlyCollection<CommandViewModel> Commands
         {
-            get
-            {
-                return _commands;
-            }
+            get { return _commands; }
         }
 
         private IList<CommandViewModel> CreateCommands()
@@ -103,7 +100,5 @@ namespace Walle.ViewModel
                 OnPropertyChanged();
             }
         }
-
-
     }
 }

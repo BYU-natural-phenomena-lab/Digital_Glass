@@ -16,7 +16,6 @@ namespace Walle.View
     {
         private VisualCollection _children;
         private CanvasHostViewModel _viewModel;
-        private DrawingVisual _bg;
         private double _scale;
 
         public CanvasHost()
@@ -55,9 +54,7 @@ namespace Walle.View
                 return;
             _viewModel.PropertyChanged += ViewModelPropertyChanged;
             _viewModel.OutlineDiscovered += DrawOutline;
-            _bg = new DrawingVisual();
-            _children.Add(_bg);
-             UpdateImage();
+            UpdateImage();
         }
 
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
@@ -66,19 +63,12 @@ namespace Walle.View
             if (_viewModel == null)
                 return;
             _scale = sizeInfo.NewSize.Height/_viewModel.ImageHeight;
-            foreach (var child in _children)
-            {
-                var dv = child as DrawingVisual;
-                if (dv == null)
-                    continue;
-                dv.Transform = GetScaleTransform();
-            }
+            this.RenderTransform = GetScaleTransform();
         }
 
         private void DrawOutline(object sender, System.Drawing.Point[] points)
         {
             var dv = new DrawingVisual();
-            dv.Transform = GetScaleTransform();
             var dc = dv.RenderOpen();
             foreach (var pt in points)
             {
@@ -105,11 +95,7 @@ namespace Walle.View
 
         private void ViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "ImageSource")
-            {
-                this.UpdateImage();
-            }
-            else if (e.PropertyName == "Processing")
+            if (e.PropertyName == "Processing")
             {
                 UiServices.SetBusyState();
             }
@@ -117,20 +103,19 @@ namespace Walle.View
 
         private void UpdateImage()
         {
-            if (_viewModel == null || _viewModel.ImageSource == null || _bg==null)
+            if (_viewModel == null || _viewModel.ImageSource == null)
                 return;
-            _bg.Transform = GetScaleTransform();
-            var dc = _bg.RenderOpen();
-            dc.DrawImage(_viewModel.ImageSource, new Rect(new Size(_viewModel.ImageWidth,_viewModel.ImageHeight)));
+            var bg = new DrawingVisual();
+            var dc = bg.RenderOpen();
+            dc.DrawImage(_viewModel.ImageSource, new Rect(new Size(_viewModel.ImageWidth, _viewModel.ImageHeight)));
             dc.Close();
+            _children.Add(bg);
             this.InvalidateVisual();
         }
 
         private void CanvasHost_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var pt = e.GetPosition((UIElement)sender);
-            var inverse = GetScaleTransform().Inverse;
-            if (inverse != null) this.StartClick = inverse.Transform(pt);
+            this.StartClick = e.GetPosition((UIElement) sender);
         }
 
 
@@ -162,13 +147,10 @@ namespace Walle.View
             if (_viewModel.Processing)
                 return;
             // Retreive the coordinates of the mouse button event.
-            var pt = e.GetPosition((UIElement)sender);
-            var inverse = GetScaleTransform().Inverse;
-            if (inverse != null)
-            {
-                var endClick = inverse.Transform(pt);
-                _viewModel.Act(StartClick.Value, endClick);
-            }
+            var endClick = e.GetPosition((UIElement) sender);
+
+
+            _viewModel.Act(StartClick.Value, endClick);
 
 
             // Initiate the hit test by setting up a hit test result callback method.
@@ -214,11 +196,11 @@ namespace Walle.View
             Size scaleFactor = ComputeScaleFactor(inputSize, naturalSize);
 
             // Returns our minimum size & sets DesiredSize.
-            return new Size(naturalSize.Width * scaleFactor.Width, naturalSize.Height * scaleFactor.Height);
+            return new Size(naturalSize.Width*scaleFactor.Width, naturalSize.Height*scaleFactor.Height);
         }
 
         private static Size ComputeScaleFactor(Size availableSize,
-                                               Size contentSize)
+            Size contentSize)
         {
             // Compute scaling factors to use for axes
             double scaleX = 1.0;
@@ -229,23 +211,18 @@ namespace Walle.View
 
 
             // Compute scaling factors for both axes
-            scaleX = (contentSize.Width == 0) ? 0.0 : availableSize.Width / contentSize.Width;
-            scaleY = contentSize.Height == 0 ? 0.0 : availableSize.Height / contentSize.Height;
+            scaleX = (contentSize.Width == 0) ? 0.0 : availableSize.Width/contentSize.Width;
+            scaleY = contentSize.Height == 0 ? 0.0 : availableSize.Height/contentSize.Height;
 
             if (!isConstrainedWidth) scaleX = scaleY;
             else if (!isConstrainedHeight) scaleY = scaleX;
             else
             {
-
                 double minscale = scaleX < scaleY ? scaleX : scaleY;
                 scaleX = scaleY = minscale;
-
-
-
             }
 
             return new Size(scaleX, scaleY);
         }
-
     }
 }

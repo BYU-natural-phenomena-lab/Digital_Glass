@@ -22,7 +22,7 @@ namespace Walle.Model
 
             public PixelTracker(int width, int height)
             {
-                _bools= new bool[width,height];
+                _bools = new bool[width, height];
                 _width = width;
                 _height = height;
             }
@@ -49,7 +49,7 @@ namespace Walle.Model
                 _baseColor = image.GetPixel(startPoint.X, startPoint.Y);
                 _image = image;
                 _queue.Enqueue(startPoint);
-                _considered =new PixelTracker(_image.Width, _image.Height);
+                _considered = new PixelTracker(_image.Width, _image.Height);
                 _considered.Add(startPoint.X, startPoint.Y);
             }
             catch (ArgumentOutOfRangeException ex)
@@ -58,7 +58,6 @@ namespace Walle.Model
             }
             _toleranceSquared = Math.Pow(tolerance, 2);
         }
-
 
 
         public Point[] Process()
@@ -82,9 +81,9 @@ namespace Walle.Model
 
         private void Explore(int x, int y)
         {
-            if (_considered.Contains(x,y))
+            if (_considered.Contains(x, y))
                 return;
-            _considered.Add(x,y);
+            _considered.Add(x, y);
             var p = new Point(x, y);
             if (IsEdge(x, y))
             {
@@ -101,7 +100,8 @@ namespace Walle.Model
             if (x < 0 || x >= _image.Width) return true;
             if (y < 0 || y >= _image.Height) return true;
             var color = _image.GetPixel(x, y);
-            var distSqr = Math.Pow(_baseColor.R - color.R, 2) + Math.Pow(_baseColor.G - color.G, 2) + Math.Pow(_baseColor.B - color.B, 2);
+            var distSqr = Math.Pow(_baseColor.R - color.R, 2) + Math.Pow(_baseColor.G - color.G, 2) +
+                          Math.Pow(_baseColor.B - color.B, 2);
             return distSqr > _toleranceSquared;
         }
     }

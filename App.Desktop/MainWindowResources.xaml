@@ -3,13 +3,13 @@
                     xmlns:vm="clr-namespace:Walle.ViewModel"
                     xmlns:view="clr-namespace:Walle.View">
 
-    <SolidColorBrush x:Key="MenuGray" Color="#FFF0F0F0"/>
+    <SolidColorBrush x:Key="MenuGray" Color="#FFF0F0F0" />
     <Style x:Key="ToolbarButtonStyle" TargetType="Button">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <Border Name="border" Background="Transparent" BorderThickness="1" BorderBrush="Black">
-                        <ContentPresenter/>
+                        <ContentPresenter />
                     </Border>
 
                     <ControlTemplate.Triggers>
@@ -31,15 +31,15 @@
     </DataTemplate>
 
     <Style x:Key="MenuItemTemplate" TargetType="MenuItem">
-        <Setter Property="Command" Value="{Binding Path=(vm:CommandViewModel.Command)}"></Setter>
-        <Setter Property="Header" Value="{Binding Path=(vm:ViewModelBase.DisplayName)}"></Setter>
+        <Setter Property="Command" Value="{Binding Path=(vm:CommandViewModel.Command)}" />
+        <Setter Property="Header" Value="{Binding Path=(vm:ViewModelBase.DisplayName)}" />
         <Setter Property="Icon">
             <Setter.Value>
-                <Image Source="{Binding Path=(vm:CommandViewModel.ImageUri)}" Height="16" Width="16"/>
+                <Image Source="{Binding Path=(vm:CommandViewModel.ImageUri)}" Height="16" Width="16" />
             </Setter.Value>
         </Setter>
     </Style>
-  
-    <view:UintConverter x:Key="UintConverter"/>
+
+    <view:UintConverter x:Key="UintConverter" />
 
 </ResourceDictionary>
