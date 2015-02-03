@@ -43,8 +43,15 @@ namespace Walle.ViewModel
             }
         }
 
-        public int ImageWidth { get { return _image.Width; }}
-        public int ImageHeight { get { return _image.Height; }}
+        public int ImageWidth
+        {
+            get { return _image.Width; }
+        }
+
+        public int ImageHeight
+        {
+            get { return _image.Height; }
+        }
 
         private uint _tolerance;
         private bool _processing;

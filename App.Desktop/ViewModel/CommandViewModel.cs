@@ -5,7 +5,7 @@ namespace Walle.ViewModel
 {
     public class CommandViewModel : ViewModelBase
     {
-        public CommandViewModel(string displayName,string imageUri, ICommand command)
+        public CommandViewModel(string displayName, string imageUri, ICommand command)
         {
             if (command == null)
                 throw new ArgumentNullException("command");
@@ -16,9 +16,8 @@ namespace Walle.ViewModel
         }
 
         public CommandViewModel(string displayName, ICommand command)
-            :this(displayName,null,command)
+            : this(displayName, null, command)
         {
-            
         }
 
         public string ImageUri { get; private set; }

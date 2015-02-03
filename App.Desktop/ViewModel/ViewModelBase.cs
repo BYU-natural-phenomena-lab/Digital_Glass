@@ -17,7 +17,9 @@ namespace Walle.ViewModel
             var handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
+
         protected virtual bool ThrowOnInvalidPropertyName { get; private set; }
+
         [Conditional("DEBUG")]
         [DebuggerStepThrough]
         public void VerifyPropertyName(string propertyName)
@@ -50,7 +52,8 @@ namespace Walle.ViewModel
         /// </summary>
         ~ViewModelBase()
         {
-            string msg = string.Format("{0} ({1}) ({2}) Finalized", this.GetType().Name, this.DisplayName, this.GetHashCode());
+            string msg = string.Format("{0} ({1}) ({2}) Finalized", this.GetType().Name, this.DisplayName,
+                this.GetHashCode());
             System.Diagnostics.Debug.WriteLine(msg);
         }
 #endif
