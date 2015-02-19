@@ -63,9 +63,10 @@ namespace Walle.ViewModel
             var pt = new System.Drawing.Point((int) startClick.X, (int) startClick.Y);
             var finder = new RegionFinder(_image, pt, Tolerance);
             Processing = true;
-            var outline = finder.Process();
+            finder.OnLineFound += OnOutlineDiscovered;
+            finder.Process();
             Processing = false;
-            OnOutlineDiscovered(outline);
+            
         }
 
         public bool Processing

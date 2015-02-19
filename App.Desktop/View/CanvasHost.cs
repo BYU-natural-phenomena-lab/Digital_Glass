@@ -1,12 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Effects;
+using System.Windows.Shapes;
 using Walle.Annotations;
 using Walle.ViewModel;
 
@@ -17,6 +21,7 @@ namespace Walle.View
         private VisualCollection _children;
         private CanvasHostViewModel _viewModel;
         private double _scale;
+        private int idx = 0;
 
         public CanvasHost()
         {
@@ -68,15 +73,49 @@ namespace Walle.View
 
         private void DrawOutline(object sender, System.Drawing.Point[] points)
         {
+            var color = NextColor();
             var dv = new DrawingVisual();
             var dc = dv.RenderOpen();
-            foreach (var pt in points)
+            for (var i = 1; i < points.Length; i++)
             {
-                dc.DrawRectangle(Brushes.Red, null, new Rect(new Point(pt.X, pt.Y), new Vector(1, 1)));
+                dc.DrawLine(new Pen(color, 0.5), 
+
+                    new Point(points[i].X,points[i].Y), 
+                     
+                    new Point(points[i - 1].X,points[i-1].Y));
             }
+            //dc.DrawLine(new Pen(Brushes.Tomato, 1), new Point(points[0].X, points[0].Y), new Point(points.Last().X, points.Last().Y));
+
+
+//            foreach (var pt in points)
+//            {
+//                dc.DrawRectangle(Brushes.Red, null, new Rect(new Point(pt.X, pt.Y), new Vector(0.5, 0.5)));
+//            }
+//            var start = points[0];
+//            dc.DrawEllipse(Brushes.Red, null, new Point(start.X-1, start.Y-1),2,2);
+
+
             dc.Close();
             _children.Add(dv);
             this.InvalidateVisual();
+        }
+
+        private Brush NextColor()
+        {
+            var colors = new List<Brush>
+            {
+                Brushes.Red,
+                Brushes.Orange,
+                Brushes.Gold,
+                Brushes.Turquoise,
+                Brushes.Green,
+                Brushes.Blue,
+                Brushes.Violet
+            };
+            idx++;
+            if (idx >= colors.Count)
+                idx = 0;
+            return colors[idx];
         }
 
 
