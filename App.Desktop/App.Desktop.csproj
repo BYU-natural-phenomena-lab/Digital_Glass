@@ -40,6 +40,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -58,6 +59,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Model\Pinhead3Rot90.cs" />
+    <Compile Include="Model\EagleBoard.cs" />
+    <Compile Include="Model\EagleBoardBuilder.cs" />
+    <Compile Include="Model\WS2812B.cs" />
     <Compile Include="RelayCommand.cs" />
     <Compile Include="ViewModel\CanvasHostViewModel.cs" />
     <Compile Include="ViewModel\CommandViewModel.cs" />
