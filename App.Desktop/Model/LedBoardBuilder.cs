@@ -1,26 +1,29 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Drawing;
 using System.Linq;
+using Walle.Eagle;
 
 namespace Walle.Model
 {
-    public class EagleBoardBuilder
+    public class LedBoardBuilder
     {
         private readonly EagleBoard _board = new EagleBoard();
-        public EagleBoard.Element Pinhead { get; private set; }
-        private readonly IList<EagleBoard.Element> _leds = new List<EagleBoard.Element>();
+        public Element Pinhead { get; private set; }
+        private readonly IList<Element> _leds = new List<Element>();
 
         /// <summary>
         /// Pin 1 = GND
         /// Pin 2 = VCC
         /// Pin 3 = Data IN
         /// </summary>
-        public EagleBoardBuilder()
+        public LedBoardBuilder()
         {
-            _board.Signals.Add("GND", new EagleBoard.Signal());
-            _board.Signals.Add("VCC", new EagleBoard.Signal());
-            Pinhead = new EagleBoard.Element
+            _board.Signals.Add("GND", new Signal());
+            _board.Signals.Add("VCC", new Signal());
+            _board.Packages.Add(new WS2812B());
+            _board.Packages.Add(new Pinhead3Rot90());
+
+            Pinhead = new Element
             {
                 Name = "LP1",
                 Package = new Pinhead3Rot90(),
@@ -39,9 +42,9 @@ namespace Walle.Model
                 );
         }
 
-        public IReadOnlyList<EagleBoard.Element> Leds
+        public IReadOnlyList<Element> Leds
         {
-            get { return new ReadOnlyCollection<EagleBoard.Element>(_leds); }
+            get { return new ReadOnlyCollection<Element>(_leds); }
         }
 
 
@@ -53,7 +56,7 @@ namespace Walle.Model
 
         public void AddLedAtPoint(double x, double y)
         {
-            var newLed = new EagleBoard.Element
+            var newLed = new Element
             {
                 Name = "LED" + (_leds.Count),
                 Package = new WS2812B(),
@@ -61,7 +64,7 @@ namespace Walle.Model
                 Y = y
             };
 
-            var ledSignal = new EagleBoard.Signal();
+            var ledSignal = new Signal();
             if (_leds.Count == 0)
             {
                 ledSignal.AddContact(

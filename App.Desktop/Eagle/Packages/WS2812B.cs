@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace Walle.Model
+namespace Walle.Eagle
 {
-    public class WS2812B : EagleBoard.IPackage
+    public class WS2812B : IPackage
     {
         private readonly IList<string> _pads = new[]
         {

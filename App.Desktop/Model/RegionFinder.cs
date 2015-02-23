@@ -20,6 +20,7 @@ namespace Walle.Model
         private Color _baseColor;
         private PixelTracker _considered;
         public event LineFound OnLineFound;
+
         public delegate void LineFound(Point[] line);
 
         private class PixelTracker
@@ -42,6 +43,7 @@ namespace Walle.Model
             {
                 _bools[x, y] = true;
             }
+
             public void Remove(int x, int y)
             {
                 _bools[x, y] = false;
@@ -64,7 +66,7 @@ namespace Walle.Model
                 _baseColor = image.GetPixel(startPoint.X, startPoint.Y);
                 _image = image;
                 _queue.Enqueue(startPoint);
-                _considered = new PixelTracker(_image.Width, _image.Height) { OutsideDefault = true };
+                _considered = new PixelTracker(_image.Width, _image.Height) {OutsideDefault = true};
                 _considered.Add(startPoint.X, startPoint.Y);
             }
             catch (ArgumentOutOfRangeException ex)
@@ -107,7 +109,7 @@ namespace Walle.Model
 
         private Point[] FindPath(System.Collections.Generic.IList<Point> points)
         {
-            _considered = new PixelTracker(_image.Width, _image.Height) { OutsideDefault = false };
+            _considered = new PixelTracker(_image.Width, _image.Height) {OutsideDefault = false};
             if (points.Count < 3)
                 return points.ToArray();
             foreach (var p in points)
@@ -151,8 +153,8 @@ namespace Walle.Model
         {
             _queue = new Queue<Point>();
             _queue.Enqueue(point);
-            var searcher = new PixelTracker(_image.Width, _image.Height) { OutsideDefault = true };
-            int startOctet = (int)Math.Round(direction / 45);
+            var searcher = new PixelTracker(_image.Width, _image.Height) {OutsideDefault = true};
+            int startOctet = (int) Math.Round(direction/45);
             while (_queue.Count > 0)
             {
                 var start = _queue.Dequeue();
@@ -161,12 +163,11 @@ namespace Walle.Model
 
                 for (var i = 0; i < 8; i++)
                 {
-                    var octet = (startOctet + i) % 8;
-                    var rad = octet * Math.PI / 4;
-                    int adjX = (int)Math.Ceiling(Math.Cos(rad));
-                    int adjY = (int)Math.Ceiling(Math.Sin(rad));
+                    var octet = (startOctet + i)%8;
+                    var rad = octet*Math.PI/4;
+                    int adjX = (int) Math.Ceiling(Math.Cos(rad));
+                    int adjY = (int) Math.Ceiling(Math.Sin(rad));
                     ConsiderNearest(searcher, start.X + adjX, start.Y + adjY);
-
                 }
             }
             return null;
@@ -179,6 +180,7 @@ namespace Walle.Model
             _queue.Enqueue(new Point(x, y));
             searching.Add(x, y);
         }
+
         private void Explore(int x, int y)
         {
             if (_considered.Contains(x, y))
@@ -211,5 +213,4 @@ namespace Walle.Model
             if (handler != null) handler(line);
         }
     }
-
 }

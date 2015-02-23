@@ -59,10 +59,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Model\Pinhead3Rot90.cs" />
-    <Compile Include="Model\EagleBoard.cs" />
-    <Compile Include="Model\EagleBoardBuilder.cs" />
-    <Compile Include="Model\WS2812B.cs" />
+    <Compile Include="Eagle\EagleBoard.Xml.cs" />
+    <Compile Include="Eagle\DefaultDesignRules.cs" />
+    <Compile Include="Eagle\Packages\Pinhead3Rot90.cs" />
+    <Compile Include="Eagle\EagleBoard.cs" />
+    <Compile Include="Model\LedBoardBuilder.cs" />
+    <Compile Include="Eagle\Packages\WS2812B.cs" />
     <Compile Include="RelayCommand.cs" />
     <Compile Include="ViewModel\CanvasHostViewModel.cs" />
     <Compile Include="ViewModel\CommandViewModel.cs" />
@@ -98,6 +100,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <Compile Include="Eagle\EagleBoard.Types.cs" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

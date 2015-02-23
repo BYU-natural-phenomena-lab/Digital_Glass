@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace Walle.Model
+namespace Walle.Eagle
 {
-    public class Pinhead3Rot90 : EagleBoard.IPackage
+    public class Pinhead3Rot90 : IPackage
     {
         private readonly IList<string> _pads = new[]
         {
