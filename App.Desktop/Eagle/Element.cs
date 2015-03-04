@@ -17,7 +17,7 @@
 
         public string Rot
         {
-            get { return "ROT" + Rotation; }
+            get { return "R" + Rotation; }
         }
 
         public int Rotation { get; set; }

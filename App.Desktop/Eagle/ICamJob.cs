@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace App.Desktop.Tests
+namespace Walle.Eagle
 {
-    public class Class1
+    internal interface ICamJob
     {
+        IList<string> StepArguments { get; }
     }
 }

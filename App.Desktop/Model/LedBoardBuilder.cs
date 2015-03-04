@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Xml.Linq;
 using Walle.Eagle;
 
 namespace Walle.Model
@@ -16,8 +17,10 @@ namespace Walle.Model
         /// Pin 2 = VCC
         /// Pin 3 = Data IN
         /// </summary>
-        public LedBoardBuilder()
+        public LedBoardBuilder(uint width, uint height)
         {
+            _board.Width = width;
+            _board.Height = height;
             _board.Signals.Add("GND", new Signal());
             _board.Signals.Add("VCC", new Signal());
             _board.Packages.Add(new WS2812B());
@@ -27,9 +30,9 @@ namespace Walle.Model
             {
                 Name = "LP1",
                 Package = new Pinhead3Rot90(),
-                X = 10,
-                Y = 10,
-                Rotation = 0
+                X = 5,
+                Y = 5,
+                Rotation = 90
             };
             _board.Elements.Add(Pinhead);
             _board.Signals["GND"].AddContact(
@@ -47,6 +50,10 @@ namespace Walle.Model
             get { return new ReadOnlyCollection<Element>(_leds); }
         }
 
+        public XDocument ToXml()
+        {
+            return _board.ToXml();
+        }
 
         public void SetPinheadLocation(double x, double y)
         {

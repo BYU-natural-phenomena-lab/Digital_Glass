@@ -19,6 +19,14 @@ namespace Walle.Eagle
                 {26, "bNames"},
                 {27, "tValues"},
                 {28, "bValues"},
+                {29, "tStop"},
+                {30, "bStop"},
+                {31, "tCream"},
+                {32, "bCream"},
+                {44, "Drills"},
+                {45, "Holes"},
+                {46, "Milling"},
+                {47, "Measures"},
             };
             Signals = new Dictionary<string, Signal>();
             Packages = new List<IPackage>();

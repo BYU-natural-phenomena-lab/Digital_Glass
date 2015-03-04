@@ -34,9 +34,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="C5">
-      <HintPath>..\packages\C5.2.3.0.1\lib\net40\C5.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -59,8 +56,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Eagle\CamJobs\SeeedStudioCamJob.cs" />
+    <Compile Include="Eagle\ContactRef.cs" />
     <Compile Include="Eagle\EagleBoard.Xml.cs" />
     <Compile Include="Eagle\DefaultDesignRules.cs" />
+    <Compile Include="Eagle\Element.cs" />
+    <Compile Include="Eagle\ICamJob.cs" />
+    <Compile Include="Eagle\IPackage.cs" />
     <Compile Include="Eagle\Packages\Pinhead3Rot90.cs" />
     <Compile Include="Eagle\EagleBoard.cs" />
     <Compile Include="Model\LedBoardBuilder.cs" />
@@ -100,8 +102,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <Compile Include="Eagle\EagleBoard.Types.cs" />
-    <None Include="packages.config" />
+    <Compile Include="Eagle\Signal.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\Close_16xLG.png">

@@ -7,7 +7,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Forms.VisualStyles;
-using C5;
 using Point = System.Drawing.Point;
 
 namespace Walle.Model

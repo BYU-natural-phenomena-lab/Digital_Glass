@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Xml.Linq;
 
 namespace Walle.Eagle
 {
@@ -6,6 +7,6 @@ namespace Walle.Eagle
     {
         string PackageName { get; }
         IList<string> Pads { get; }
-        string WiresXml();
+        XElement ToXml();
     }
 }

@@ -7,11 +7,14 @@ namespace Walle.Eagle
     {
         public XDocument ToXml()
         {
-            var docNode = new XElement("eagle",
+            var doc= new XDocument()
+            {
+                Declaration = new       XDeclaration("1.0","utf-8",null)
+            };
+            var rootNode = new XElement("eagle",
                 new XAttribute("version", this.Version),
                 new XElement("drawing",
-                    new XElement("settings",
-                        GetLayers()),
+                    GetLayers(),
                     new XElement("board",
                         GetDimension(),
                         new XElement("libraries",
@@ -19,10 +22,13 @@ namespace Walle.Eagle
                                 GetPackages()
                                 )
                             ),
-                        new XElement("designrules", new XAttribute("name", "default"), new XText(DesignRules.RulesXml)),
+                        new DefaultDesignRules().RulesXml,
                         GetElements(),
                         GetSignals())));
-            return new XDocument(docNode);
+            doc.AddFirst(new XDocumentType("eagle", null, "eagle.dtd", null));
+            doc.Add(rootNode);
+            var x = new XElement("test");
+            return doc;
         }
 
         private XElement GetSignals()
@@ -33,7 +39,7 @@ namespace Walle.Eagle
                         new XAttribute("name", s.Key),
                         s.Value.ContactRefs.Select(cr => new XElement("contactref",
                             new XAttribute("element", cr.Element.Name),
-                            new XAttribute("pad", cr.Element.Package.Pads[cr.PadIndex])))))
+                            new XAttribute("pad", cr.Element.Package.Pads[cr.PadIndex -1])))))
                 );
         }
 
@@ -56,9 +62,8 @@ namespace Walle.Eagle
             return new XElement("packages",
                 Packages.Select(
                     package =>
-                        new XElement("package", new XAttribute("name", package.PackageName),
-                            new XText(package.WiresXml())))
-                );
+                        package.ToXml()
+                ));
         }
 
         private XElement GetLayers()
@@ -66,7 +71,8 @@ namespace Walle.Eagle
             return new XElement("layers",
                 _layers.Select(pair => new XElement("layer",
                     new XAttribute("number", pair.Key),
-                    new XAttribute("name", pair.Value)
+                    new XAttribute("name", pair.Value),
+                    new XAttribute("color", "1")
                     ))
                 )
                 ;
@@ -100,7 +106,7 @@ namespace Walle.Eagle
                     new XAttribute("layer", 20)
                     ),
                 new XElement("wire",
-                    new XAttribute("x1", Width),
+                    new XAttribute("x1", 0),
                     new XAttribute("y1", Height),
                     new XAttribute("x2", 0),
                     new XAttribute("y2", 0),
