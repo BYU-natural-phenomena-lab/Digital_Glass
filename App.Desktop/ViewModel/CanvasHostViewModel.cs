@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Windows;
+using System.Collections.ObjectModel;
 using System.Drawing;
-using System.Security.AccessControl;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Walle.Commands;
 using Walle.Model;
-using Point = System.Drawing.Point;
 
 namespace Walle.ViewModel
 {
@@ -13,12 +12,16 @@ namespace Walle.ViewModel
     {
         private ImageSource _imageSource;
         private Bitmap _image;
+        private CanvasHostMode _canvasMode;
 
         public CanvasHostViewModel(Uri uri)
         {
-            this.ImageSource = new BitmapImage(uri);
+            Cells = new ObservableCollection<CellBoundaries>();
+            Leds = new ObservableCollection<Led>();
+            ImageSource = new BitmapImage(uri);
             _image = new Bitmap(uri.LocalPath);
             Tolerance = 30;
+            _canvasMode = CanvasHostMode.None;
         }
 
         public ImageSource ImageSource
@@ -54,20 +57,17 @@ namespace Walle.ViewModel
         }
 
         private uint _tolerance;
-        private bool _processing;
-
-        public event OutlineDiscoveredHandler OutlineDiscovered;
 
         public void Act(System.Windows.Point startClick, System.Windows.Point endClick)
         {
-            var pt = new System.Drawing.Point((int) startClick.X, (int) startClick.Y);
-            var finder = new RegionFinder(_image, pt, Tolerance);
+            var command = CanvasHostCommandFactory.Create(this, _canvasMode);
+            if (command == null) return;
             Processing = true;
-            finder.OnLineFound += OnOutlineDiscovered;
-            finder.Process();
+            command.Execute(startClick,endClick);
             Processing = false;
-            
         }
+
+        private bool _processing;
 
         public bool Processing
         {
@@ -80,12 +80,33 @@ namespace Walle.ViewModel
             }
         }
 
-        protected virtual void OnOutlineDiscovered(Point[] points)
+        public Bitmap Image
         {
-            var handler = OutlineDiscovered;
-            if (handler != null) handler(this, points);
+            get
+            {
+                return _image;
+            }
+        }
+
+        public ObservableCollection<CellBoundaries> Cells { get; private set; }
+        public ObservableCollection<Led> Leds { get; private set; }
+
+        public CanvasHostMode CanvasMode
+        {
+            get { return _canvasMode; }
+            set
+            {
+                if (value.Equals(_canvasMode)) return;
+                _canvasMode = value;
+                OnPropertyChanged();
+            }
         }
     }
 
-    public delegate void OutlineDiscoveredHandler(object sender, System.Drawing.Point[] points);
+    public enum CanvasHostMode
+    {
+        None,
+        FindCell,
+        PlaceLED
+    }
 }

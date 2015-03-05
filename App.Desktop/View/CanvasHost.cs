@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
@@ -12,6 +13,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Effects;
 using System.Windows.Shapes;
 using Walle.Annotations;
+using Walle.Model;
 using Walle.ViewModel;
 
 namespace Walle.View
@@ -22,6 +24,8 @@ namespace Walle.View
         private CanvasHostViewModel _viewModel;
         private double _scale;
         private int idx = 0;
+        private IList<DrawingVisual> _outlines = new List<DrawingVisual>();
+        private IList<DrawingVisual> _leds = new List<DrawingVisual>();
 
         public CanvasHost()
         {
@@ -49,7 +53,8 @@ namespace Walle.View
             if (oldDc != null)
             {
                 oldDc.PropertyChanged -= ViewModelPropertyChanged;
-                oldDc.OutlineDiscovered -= DrawOutline;
+                oldDc.Cells.CollectionChanged -= DrawOutline;
+                oldDc.Leds.CollectionChanged -= DrawLed;
             }
 
             _viewModel = e.NewValue as CanvasHostViewModel;
@@ -58,8 +63,66 @@ namespace Walle.View
             if (_viewModel == null)
                 return;
             _viewModel.PropertyChanged += ViewModelPropertyChanged;
-            _viewModel.OutlineDiscovered += DrawOutline;
+            _viewModel.Cells.CollectionChanged += DrawOutline;
+            _viewModel.Leds.CollectionChanged += DrawLed;
             UpdateImage();
+        }
+
+        private void DrawLed(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            ModelToVisual<Led>(sender, e, CreateLedVisual,ref _leds);
+        }
+
+        private DrawingVisual CreateLedVisual(Led led)
+        {
+            var color = Brushes.OrangeRed;
+            var dv = new DrawingVisual();
+            var dc = dv.RenderOpen();
+            dc.DrawEllipse(color,null,new Point(led.X,led.Y), 3, 3);
+            dc.Close();
+            return dv;
+        }
+
+        private void DrawOutline(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            ModelToVisual<CellBoundaries>(sender,e,CreateLineVisual,ref _outlines);
+        }
+
+        private void ModelToVisual<T>(object sender,NotifyCollectionChangedEventArgs e, Func<T,DrawingVisual> Creator, ref IList<DrawingVisual> layer)
+        {
+            var collection = sender as ObservableCollection<T>;
+            if (collection == null) return;
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+
+                    var newVisuals = e.NewItems.Cast<T>().Select(Creator);
+                    foreach (var dv in newVisuals)
+                    {
+                        layer.Add(dv);
+                        _children.Add(dv);
+                    }
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    var rm = layer[e.OldStartingIndex];
+                    layer.RemoveAt(e.OldStartingIndex);
+                    _children.Remove(rm);
+                    break;
+                case NotifyCollectionChangedAction.Replace:
+                    break;
+                case NotifyCollectionChangedAction.Move:
+                    break;
+                case NotifyCollectionChangedAction.Reset:
+                    foreach (var dv in _outlines)
+                    {
+                        _children.Remove(dv);
+                    }
+                    layer = new List<DrawingVisual>();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            this.InvalidateVisual();
         }
 
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
@@ -71,18 +134,17 @@ namespace Walle.View
             this.RenderTransform = GetScaleTransform();
         }
 
-        private void DrawOutline(object sender, System.Drawing.Point[] points)
+
+        private DrawingVisual CreateLineVisual(CellBoundaries bnd)
         {
             var color = NextColor();
             var dv = new DrawingVisual();
             var dc = dv.RenderOpen();
-            for (var i = 1; i < points.Length; i++)
+            for (var i = 1; i < bnd.Points.Length; i++)
             {
-                dc.DrawLine(new Pen(color, 0.5), 
-
-                    new Point(points[i].X,points[i].Y), 
-                     
-                    new Point(points[i - 1].X,points[i-1].Y));
+                dc.DrawLine(new Pen(color, 0.5),
+                    new Point(bnd.Points[i].X, bnd.Points[i].Y),
+                    new Point(bnd.Points[i - 1].X, bnd.Points[i - 1].Y));
             }
             //dc.DrawLine(new Pen(Brushes.Tomato, 1), new Point(points[0].X, points[0].Y), new Point(points.Last().X, points.Last().Y));
 
@@ -96,8 +158,7 @@ namespace Walle.View
 
 
             dc.Close();
-            _children.Add(dv);
-            this.InvalidateVisual();
+            return dv;
         }
 
         private Brush NextColor()

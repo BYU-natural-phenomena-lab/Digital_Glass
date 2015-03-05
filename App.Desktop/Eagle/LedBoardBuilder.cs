@@ -2,9 +2,8 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Xml.Linq;
-using Walle.Eagle;
 
-namespace Walle.Model
+namespace Walle.Eagle
 {
     public class LedBoardBuilder
     {

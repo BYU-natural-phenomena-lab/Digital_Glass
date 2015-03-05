@@ -65,8 +65,14 @@
     <Compile Include="Eagle\IPackage.cs" />
     <Compile Include="Eagle\Packages\Pinhead3Rot90.cs" />
     <Compile Include="Eagle\EagleBoard.cs" />
-    <Compile Include="Model\LedBoardBuilder.cs" />
+    <Compile Include="Commands\FindCellCommand.cs" />
+    <Compile Include="Commands\ClickCommandFactory.cs" />
+    <Compile Include="Commands\ICanvasHostCommand.cs" />
+    <Compile Include="Eagle\LedBoardBuilder.cs" />
     <Compile Include="Eagle\Packages\WS2812B.cs" />
+    <Compile Include="Commands\PlaceLedCommand.cs" />
+    <Compile Include="Model\CellBoundaries.cs" />
+    <Compile Include="Model\Led.cs" />
     <Compile Include="RelayCommand.cs" />
     <Compile Include="ViewModel\CanvasHostViewModel.cs" />
     <Compile Include="ViewModel\CommandViewModel.cs" />
@@ -93,7 +99,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Model\RegionFinder.cs" />
+    <Compile Include="Commands\RegionFinder.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -111,6 +117,8 @@
     <Content Include="Resources\folder_Open_32xLG.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\MagicWand_64x.png" />
+    <Resource Include="Resources\LightBulb_32xMD.png" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

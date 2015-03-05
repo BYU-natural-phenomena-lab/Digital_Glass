@@ -25,9 +25,7 @@
             <Label Padding="2" Content="" x:Name="Coordinates" BorderThickness="0,0,1,0" />
         </StackPanel>
         <StackPanel Background="WhiteSmoke" DockPanel.Dock="Left">
-            <Button>
-                <Image Source="Resources/folder_Open_32xLG.png" Height="32" Width="32" />
-            </Button>
+            <ItemsControl ItemTemplate="{StaticResource CommandButtonTemplate}" ItemsSource="{Binding Path=ToolbarCommands}"></ItemsControl>
         </StackPanel>
         <DockPanel DockPanel.Dock="Top" Background="WhiteSmoke">
             <StackPanel Orientation="Horizontal" Margin="4">

@@ -13,14 +13,18 @@ namespace Walle.ViewModel
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        private IReadOnlyCollection<CommandViewModel> _commands;
+        private readonly IReadOnlyCollection<CommandViewModel> _commands;
+        private IReadOnlyCollection<CommandViewModel> _toolbarCommands; 
         private string _coordinates;
         private CanvasHostViewModel _canvasHost;
 
         public MainWindowViewModel()
         {
             _commands = new ReadOnlyCollection<CommandViewModel>(CreateCommands());
+            _toolbarCommands = new ReadOnlyCollection<CommandViewModel>(CreateToolbarCommands());
         }
+
+     
 
         public event Action RequestClose;
 
@@ -48,6 +52,12 @@ namespace Walle.ViewModel
             get { return _commands; }
         }
 
+        [UsedImplicitly]
+        public IReadOnlyCollection<CommandViewModel> ToolbarCommands
+        {
+            get { return _toolbarCommands; }
+        }
+
         private IList<CommandViewModel> CreateCommands()
         {
             return new List<CommandViewModel>()
@@ -58,6 +68,14 @@ namespace Walle.ViewModel
                 new CommandViewModel("Exit...", "Resources/Close_16xLG.png", new RelayCommand(param => this.CloseApp())),
             };
         }
+        private IList<CommandViewModel> CreateToolbarCommands()
+        {
+            return new List<CommandViewModel>
+            {
+                new CommandViewModel("Find Cell Boundaries", "Resources/MagicWand_64x.png", new RelayCommand(param=>this.CanvasHost.CanvasMode = CanvasHostMode.FindCell, param=>this.ImageLoaded)),
+                new CommandViewModel("Place LED","Resources/LightBulb_32xMD.png",new RelayCommand(param=>this.CanvasHost.CanvasMode = CanvasHostMode.PlaceLED, param=>this.ImageLoaded))
+            };
+        }
 
         private void CloseApp()
         {
@@ -66,6 +84,7 @@ namespace Walle.ViewModel
 
         private void CloseFile()
         {
+            ImageLoaded = false;
             CanvasHost = null;
             CanClose = false;
         }
@@ -80,9 +99,12 @@ namespace Walle.ViewModel
             if (result == true)
             {
                 CanvasHost = new CanvasHostViewModel(new Uri(dialog.FileName));
+                ImageLoaded = true;
                 CanClose = true;
             }
         }
+
+        public bool ImageLoaded { get; set; }
 
         public void UpdateCoordinates(object sender, MouseEventArgs e)
         {
