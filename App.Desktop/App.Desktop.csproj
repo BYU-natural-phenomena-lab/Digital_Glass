@@ -37,6 +37,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -61,6 +62,7 @@
     <Compile Include="Eagle\EagleBoard.Xml.cs" />
     <Compile Include="Eagle\DefaultDesignRules.cs" />
     <Compile Include="Eagle\Element.cs" />
+    <Compile Include="Eagle\GerberExporter.cs" />
     <Compile Include="Eagle\ICamJob.cs" />
     <Compile Include="Eagle\IPackage.cs" />
     <Compile Include="Eagle\Packages\Pinhead3Rot90.cs" />

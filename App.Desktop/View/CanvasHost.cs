@@ -4,14 +4,9 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Media.Effects;
-using System.Windows.Shapes;
 using Walle.Annotations;
 using Walle.Model;
 using Walle.ViewModel;
@@ -70,7 +65,7 @@ namespace Walle.View
 
         private void DrawLed(object sender, NotifyCollectionChangedEventArgs e)
         {
-            ModelToVisual<Led>(sender, e, CreateLedVisual,ref _leds);
+            ModelToVisual<Led>(sender, e, CreateLedVisual, ref _leds);
         }
 
         private DrawingVisual CreateLedVisual(Led led)
@@ -78,17 +73,18 @@ namespace Walle.View
             var color = Brushes.OrangeRed;
             var dv = new DrawingVisual();
             var dc = dv.RenderOpen();
-            dc.DrawEllipse(color,null,new Point(led.X,led.Y), 3, 3);
+            dc.DrawEllipse(color, null, new Point(led.X, led.Y), 3, 3);
             dc.Close();
             return dv;
         }
 
         private void DrawOutline(object sender, NotifyCollectionChangedEventArgs e)
         {
-            ModelToVisual<CellBoundaries>(sender,e,CreateLineVisual,ref _outlines);
+            ModelToVisual<CellBoundaries>(sender, e, CreateLineVisual, ref _outlines);
         }
 
-        private void ModelToVisual<T>(object sender,NotifyCollectionChangedEventArgs e, Func<T,DrawingVisual> Creator, ref IList<DrawingVisual> layer)
+        private void ModelToVisual<T>(object sender, NotifyCollectionChangedEventArgs e, Func<T, DrawingVisual> Creator,
+            ref IList<DrawingVisual> layer)
         {
             var collection = sender as ObservableCollection<T>;
             if (collection == null) return;
@@ -240,7 +236,7 @@ namespace Walle.View
 
         // Capture the mouse event and hit test the coordinate point value against 
         // the child visual objects. 
-        private void CanvasHost_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void CanvasHost_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             if (!StartClick.HasValue)
                 return;

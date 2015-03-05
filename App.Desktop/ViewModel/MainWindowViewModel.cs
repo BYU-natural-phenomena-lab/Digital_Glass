@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 using Walle.Annotations;
+using Walle.Eagle;
 
 namespace Walle.ViewModel
 {
@@ -64,10 +65,28 @@ namespace Walle.ViewModel
             {
                 new CommandViewModel("Open...", "Resources/folder_Open_32xLG.png",
                     new RelayCommand(param => this.OpenFile())),
+                new CommandViewModel("Export...",null,new RelayCommand(param=>this.ExportModel(),param=>this.ImageLoaded)),
                 new CommandViewModel("Close...", new RelayCommand(param => this.CloseFile(), param => this.CanClose)),
                 new CommandViewModel("Exit...", "Resources/Close_16xLG.png", new RelayCommand(param => this.CloseApp())),
             };
         }
+
+        private void ExportModel()
+        {
+            var dialog = new SaveFileDialog();
+            dialog.Filter = "Zip File|*.zip";
+            var result = dialog.ShowDialog();
+            if (result != true) return;
+            var ledBoard = new LedBoardBuilder(this.CanvasHost.BoardWidth, this.CanvasHost.BoardHeight);
+            foreach (var led in this.CanvasHost.Leds)
+            {
+                ledBoard.AddLedAtPoint(led.X,led.Y);
+            }
+            var exporter = new GerberExporter(dialog.FileName, ledBoard);
+            exporter.Export();
+
+        }
+
         private IList<CommandViewModel> CreateToolbarCommands()
         {
             return new List<CommandViewModel>

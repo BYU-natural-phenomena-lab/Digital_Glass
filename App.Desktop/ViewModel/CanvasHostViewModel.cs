@@ -101,6 +101,24 @@ namespace Walle.ViewModel
                 OnPropertyChanged();
             }
         }
+
+        public uint BoardWidth
+        {
+            get
+            {
+                //TODO scale the board to custom size
+                return (uint) this.ImageWidth;
+            }
+        }
+
+        public uint BoardHeight
+        {
+            get
+            {
+                //TODO scale the board to custom size
+                return (uint) this.ImageHeight;
+            }
+        }
     }
 
     public enum CanvasHostMode
