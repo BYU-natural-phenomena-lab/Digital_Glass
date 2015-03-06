@@ -67,6 +67,8 @@
     <Compile Include="Eagle\ICamJob.cs" />
     <Compile Include="Eagle\IPackage.cs" />
     <Compile Include="Eagle\Packages\Pinhead3Rot90.cs" />
+    <Compile Include="Eagle\Packages\Pinhead2.cs" />
+    <Compile Include="Eagle\Packages\Pinhead5Rot90.cs" />
     <Compile Include="Eagle\EagleBoard.cs" />
     <Compile Include="Commands\FindCellCommand.cs" />
     <Compile Include="Commands\ClickCommandFactory.cs" />

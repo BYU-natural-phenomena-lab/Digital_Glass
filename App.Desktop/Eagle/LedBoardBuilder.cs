@@ -23,25 +23,43 @@ namespace Walle.Eagle
             _board.Signals.Add("GND", new Signal());
             _board.Signals.Add("VCC", new Signal());
             _board.Packages.Add(new WS2812B());
-            _board.Packages.Add(new Pinhead3Rot90());
+            _board.Packages.Add(new Pinhead5Rot90());
 
             Pinhead = new Element
             {
                 Name = "LP1",
-                Package = new Pinhead3Rot90(),
+                Package = new Pinhead5Rot90(),
                 X = 5,
-                Y = 10,
+                Y = 15,
                 Rotation = 90
             };
             _board.Elements.Add(Pinhead);
             _board.Signals["GND"].AddContact(
                 element: Pinhead,
-                padIndex: 1 // GND
+                padIndex: 0 // GND
                 );
             _board.Signals["VCC"].AddContact(
                 element: Pinhead,
-                padIndex: 2 // VCC
+                padIndex: 1 // VCC
                 );
+
+            // custom part
+            _board.Signals.Add("TOUCH1",new Signal());
+            _board.Signals.Add("TOUCH2",new Signal());
+            _board.Packages.Add(new Pinhead2());
+            var touchPin = new Element()
+            {
+                Name = "LP2",
+                Package = new Pinhead2(),
+                X = 130,
+                Y = 20,
+                Rotation = 0
+            };
+            _board.Elements.Add(touchPin);
+            _board.Signals["TOUCH1"].AddContact(touchPin,0);
+            _board.Signals["TOUCH1"].AddContact(Pinhead,3);
+            _board.Signals["TOUCH2"].AddContact(touchPin,1);
+            _board.Signals["TOUCH2"].AddContact(Pinhead,4);
         }
 
         public IReadOnlyList<Element> Leds
@@ -75,19 +93,19 @@ namespace Walle.Eagle
             {
                 ledSignal.AddContact(
                     element: Pinhead,
-                    padIndex: 3 // Data
+                    padIndex: 2 // Data
                     );
             }
             else
             {
                 ledSignal.AddContact(
                     element: _leds.Last(),
-                    padIndex: 2 // DOUT
+                    padIndex: 1 // DOUT
                     );
             }
             ledSignal.AddContact(
                 element: newLed,
-                padIndex: 4 // DIN
+                padIndex: 3 // DIN
                 );
 
             _leds.Add(newLed);
@@ -96,11 +114,11 @@ namespace Walle.Eagle
             _board.Signals.Add("N$" + newLed.Name, ledSignal);
             _board.Signals["VCC"].AddContact(
                 element: newLed,
-                padIndex: 1 // VCC
+                padIndex: 0 // VCC
                 );
             _board.Signals["GND"].AddContact(
                 element: newLed,
-                padIndex: 3 // GND
+                padIndex: 2 // GND
                 );
         }
     }

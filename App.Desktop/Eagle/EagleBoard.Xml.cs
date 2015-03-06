@@ -39,7 +39,7 @@ namespace Walle.Eagle
                         new XAttribute("name", s.Key),
                         s.Value.ContactRefs.Select(cr => new XElement("contactref",
                             new XAttribute("element", cr.Element.Name),
-                            new XAttribute("pad", cr.Element.Package.Pads[cr.PadIndex -1])))))
+                            new XAttribute("pad", cr.Element.Package.Pads[cr.PadIndex])))))
                 );
         }
 
