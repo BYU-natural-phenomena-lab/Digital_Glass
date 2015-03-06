@@ -5,47 +5,32 @@ using System.IO.Compression;
 
 namespace Walle.Eagle
 {
-    public class GerberExporter
+    public class GerberExporter : EagleExporter
     {
-        private LedBoardBuilder _board;
         private string _zip;
 
         public GerberExporter(string destZipFile, LedBoardBuilder board)
+            :base(GetTempBoardFile(), board)
         {
             _zip = destZipFile;
-            _board = board;
         }
 
-        private string CreateBoardFile()
+        private static string GetTempBoardFile()
         {
-            var boardFile = Path.GetTempFileName() + ".brd";
-            //  var boardFile = "test.brd";
-            using (var file = new StreamWriter(boardFile))
+            return Path.GetTempFileName() + ".brd";
+        }
+
+        public override bool Export()
+        {
+            if (!base.Export())
             {
-                _board.ToXml().Save(file);
+                return false;
             }
-            return boardFile;
+            Gerberify(BoardFile, _zip);
+            return true;
         }
 
-        private Process Autoroute(string boardFile)
-        {
-            var pri = new ProcessStartInfo
-            {
-                CreateNoWindow = true,
-                FileName = @"C:\EAGLE-7.2.0\bin\eagle.exe",
-                Arguments = String.Format(@" -C 'ripup *; auto *; write; quit;' {0}", boardFile)
-            };
-            return Process.Start(pri);
-        }
-
-        public void Export()
-        {
-            var boardFile = CreateBoardFile();
-            Autoroute(boardFile).WaitForExit();
-            Gerberify(boardFile);
-        }
-
-        private void Gerberify(string boardFile)
+        private static void Gerberify(string boardFile, string destZipFile)
         {
             var gerberDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             Directory.CreateDirectory(gerberDir);
@@ -61,7 +46,7 @@ namespace Walle.Eagle
                 Console.WriteLine(pri.Arguments);
                 Process.Start(pri).WaitForExit();
             }
-            ZipFile.CreateFromDirectory(gerberDir, _zip);
+            ZipFile.CreateFromDirectory(gerberDir, destZipFile);
         }
     }
 }

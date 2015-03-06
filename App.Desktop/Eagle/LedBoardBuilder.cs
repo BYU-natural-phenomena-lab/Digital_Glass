@@ -30,7 +30,7 @@ namespace Walle.Eagle
                 Name = "LP1",
                 Package = new Pinhead3Rot90(),
                 X = 5,
-                Y = 5,
+                Y = 10,
                 Rotation = 90
             };
             _board.Elements.Add(Pinhead);

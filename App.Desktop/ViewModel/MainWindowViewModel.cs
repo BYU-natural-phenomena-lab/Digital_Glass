@@ -65,24 +65,42 @@ namespace Walle.ViewModel
             {
                 new CommandViewModel("Open...", "Resources/folder_Open_32xLG.png",
                     new RelayCommand(param => this.OpenFile())),
-                new CommandViewModel("Export...",null,new RelayCommand(param=>this.ExportModel(),param=>this.ImageLoaded)),
+                new CommandViewModel("Export to Eagle BRD...",null,new RelayCommand(param=>this.ExportEagle(),param=>this.ImageLoaded)),
+                new CommandViewModel("Export to Gerber...",null,new RelayCommand(param=>this.ExportGerber(),param=>this.ImageLoaded)),
                 new CommandViewModel("Close...", new RelayCommand(param => this.CloseFile(), param => this.CanClose)),
                 new CommandViewModel("Exit...", "Resources/Close_16xLG.png", new RelayCommand(param => this.CloseApp())),
             };
         }
 
-        private void ExportModel()
+        private LedBoardBuilder CreateBoardFromModel()
+        {
+            var ledBoard = new LedBoardBuilder(this.CanvasHost.BoardWidth, this.CanvasHost.BoardHeight);
+            foreach (var led in this.CanvasHost.Leds)
+            {
+                ledBoard.AddLedAtPoint(led.X, this._canvasHost.ImageHeight - led.Y); // transform to board space
+            }
+            return ledBoard;
+        }
+
+        private void ExportGerber()
         {
             var dialog = new SaveFileDialog();
             dialog.Filter = "Zip File|*.zip";
             var result = dialog.ShowDialog();
             if (result != true) return;
-            var ledBoard = new LedBoardBuilder(this.CanvasHost.BoardWidth, this.CanvasHost.BoardHeight);
-            foreach (var led in this.CanvasHost.Leds)
-            {
-                ledBoard.AddLedAtPoint(led.X,led.Y);
-            }
-            var exporter = new GerberExporter(dialog.FileName, ledBoard);
+
+            var exporter = new GerberExporter(dialog.FileName, CreateBoardFromModel());
+            exporter.Export();
+
+        }
+
+        private void ExportEagle()
+        {
+            var dialog = new SaveFileDialog();
+            dialog.Filter = "Eagle Board File|*.brd";
+            var result = dialog.ShowDialog();
+            if (result != true) return;
+            var exporter = new EagleExporter(dialog.FileName, CreateBoardFromModel());
             exporter.Export();
 
         }
