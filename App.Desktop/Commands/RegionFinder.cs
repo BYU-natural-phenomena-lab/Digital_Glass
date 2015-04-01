@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Forms.VisualStyles;
+using C5;
 using Point = System.Drawing.Point;
 
 namespace Walle.Model
@@ -18,9 +19,10 @@ namespace Walle.Model
         private readonly double _toleranceSquared;
         private Color _baseColor;
         private PixelTracker _considered;
-        public event LineFound OnLineFound;
+        private Point _start;
+        public event LineFoundHandler LineFound;
 
-        public delegate void LineFound(Point[] line);
+        public delegate void LineFoundHandler(Point[] line);
 
         private class PixelTracker
         {
@@ -56,12 +58,11 @@ namespace Walle.Model
             }
         }
 
-        private List<Point> outside;
-
         public RegionFinder(Bitmap image, Point startPoint, uint tolerance)
         {
             try
             {
+                _start = startPoint;
                 _baseColor = image.GetPixel(startPoint.X, startPoint.Y);
                 _image = image;
                 _queue.Enqueue(startPoint);
@@ -75,10 +76,9 @@ namespace Walle.Model
             _toleranceSquared = Math.Pow(tolerance, 2);
         }
 
-        private System.Collections.Generic.IList<Point> FindBorder()
+        private ISet<Point> _outside = new System.Collections.Generic.HashSet<Point>(); 
+        private void FloodFill()
         {
-            outside = new List<Point>();
-
             while (_queue.Count > 0)
             {
                 var start = _queue.Dequeue();
@@ -91,93 +91,121 @@ namespace Walle.Model
                 Explore(start.X + 1, start.Y - 1);
                 Explore(start.X, start.Y - 1);
             }
-            return outside;
         }
 
         public void Process()
         {
-            var outside = FindBorder();
-            var ordered = FindPath(outside);
-            OnLineFound(ordered);
-        }
-
-        private static double DistanceSqr(Point a, Point b)
-        {
-            return Math.Pow(a.X - b.X, 2) + Math.Pow(a.Y - b.Y, 2);
-        }
-
-        private Point[] FindPath(System.Collections.Generic.IList<Point> points)
-        {
-            _considered = new PixelTracker(_image.Width, _image.Height) {OutsideDefault = false};
-            if (points.Count < 3)
-                return points.ToArray();
-            foreach (var p in points)
-                _considered.Add(p.X, p.Y);
-            var ordered = new List<Point>();
-            var start = points[0];
-            Point? current = points[0];
-            double direction = 0;
-            while (current.HasValue)
+            FloodFill();
+            var edgePoints = new List<Point>
             {
-                ordered.Add(current.Value);
-                if (current.Value != start)
-                    _considered.Remove(current.Value.X, current.Value.Y);
-                var last = current;
-                current = FindNearest(current.Value, direction);
-                if (current.HasValue)
+                FindEdge(_start, 1, 0), //E
+                FindEdge(_start, 1, 1), //SE
+                FindEdge(_start, 0, 1), //S
+                FindEdge(_start, -1, 1), //SW
+                FindEdge(_start, -1, 0), //W
+                FindEdge(_start, -1, -1), //NW
+                FindEdge(_start, 0, -1), //N
+            };
+            var points = new List<Point>();
+            for (var i = 1; i < edgePoints.Count; i++)
+            {
+                points.AddRange(LeastCostPath(edgePoints[i],edgePoints[i-1]));
+            }
+            points.AddRange(LeastCostPath(edgePoints[0], edgePoints[edgePoints.Count-1]));
+
+           
+            OnLineFound(points.ToArray());
+        }
+
+        private System.Collections.Generic.IList<Point> LeastCostPath(Point start, Point end)
+        {
+            var h = new IntervalHeap<Node>(new NodeCmpr());
+            var n = new Node
+            {
+                Back = null,
+                Cost = 0,
+                Point = start
+            };
+            h.Add(n);
+            _considered = new PixelTracker(_image.Width, _image.Height) { OutsideDefault = true };
+            while (!h.IsEmpty)
+            {
+                var node = h.DeleteMin();
+                if (node.Point.X == end.X && node.Point.Y == end.Y)
                 {
-                    if (current.Value == start)
-                    {
-                        break;
-                    }
-                    direction = Direction(last.Value, current.Value);
+                    return Backtrace(node);
                 }
+                Follow(h,node,node.Point.X - 1, node.Point.Y - 1);
+                Follow(h,node,node.Point.X - 1, node.Point.Y);
+                Follow(h,node,node.Point.X - 1, node.Point.Y + 1);
+                Follow(h,node,node.Point.X, node.Point.Y + 1);
+                Follow(h,node,node.Point.X + 1, node.Point.Y + 1);
+                Follow(h,node,node.Point.X + 1, node.Point.Y);
+                Follow(h,node,node.Point.X + 1, node.Point.Y - 1);
+                Follow(h,node,node.Point.X, node.Point.Y - 1);
             }
-            if (ordered.Count < points.Count)
+            return new Point[]{};
+        }
+
+        private System.Collections.Generic.IList<Point> Backtrace(Node node)
+        {
+            var points = new List<Point>();
+            while (node != null)
             {
-                var leftOut = points.Where(pt => _considered.Contains(pt.X, pt.Y));
-                Debug.WriteLine("Left overs {0}", leftOut.Count());
+                points.Add(node.Point);
+                node = node.Back;
             }
-
-            return ordered.ToArray();
+            return points;
         }
 
-        private double Direction(Point last, Point next)
+        private void Follow(IPriorityQueue<Node> heap,Node previous, int x, int y)
         {
-            var unit = new Vector(1, 0);
-            return Vector.AngleBetween(unit, new Vector(last.X - next.X, last.Y - next.Y));
-        }
-
-        private Point? FindNearest(Point point, double direction)
-        {
-            _queue = new Queue<Point>();
-            _queue.Enqueue(point);
-            var searcher = new PixelTracker(_image.Width, _image.Height) {OutsideDefault = true};
-            int startOctet = (int) Math.Round(direction/45);
-            while (_queue.Count > 0)
-            {
-                var start = _queue.Dequeue();
-                if (_considered.Contains(start.X, start.Y) && !start.Equals(point))
-                    return start;
-
-                for (var i = 0; i < 8; i++)
-                {
-                    var octet = (startOctet + i)%8;
-                    var rad = octet*Math.PI/4;
-                    int adjX = (int) Math.Ceiling(Math.Cos(rad));
-                    int adjY = (int) Math.Ceiling(Math.Sin(rad));
-                    ConsiderNearest(searcher, start.X + adjX, start.Y + adjY);
-                }
-            }
-            return null;
-        }
-
-        private void ConsiderNearest(PixelTracker searching, int x, int y)
-        {
-            if (searching.Contains(x, y))
+            if (_considered.Contains(x,y))
                 return;
-            _queue.Enqueue(new Point(x, y));
-            searching.Add(x, y);
+            _considered.Add(x,y);
+            var point = new Point(x, y);
+            if (!_outside.Contains(point))
+                return;
+            var node = new Node
+            {
+                Back = previous,
+                Point = point,
+                Cost = previous.Cost + Distance(point, previous.Point)
+            };
+            heap.Add(node);
+        }
+
+        private static double Distance(Point p1, Point p2)
+        {
+            return Math.Sqrt(Math.Pow(p1.X - p2.X, 2) + Math.Pow(p1.Y - p2.Y, 2));
+        }
+
+
+        private class NodeCmpr : IComparer<Node>
+        {
+            public int Compare(Node x, Node y)
+            {
+                return x.Cost.CompareTo(y.Cost);
+            }
+        }
+
+        private class Node
+        {
+            public double Cost { get; set; }
+            public Point Point { get; set; }
+            public Node Back { get; set; }
+        }
+
+        private Point FindEdge(Point start,int xDirection, int yDirection)
+        {
+            var x = start.X;
+            var y = start.Y;
+            while (!IsEdge(x, y))
+            {
+                x += xDirection;
+                y += yDirection;
+            }
+            return new Point(x, y);
         }
 
         private void Explore(int x, int y)
@@ -185,13 +213,12 @@ namespace Walle.Model
             if (_considered.Contains(x, y))
                 return;
             _considered.Add(x, y);
-            var p = new Point(x, y);
+                var p = new Point(x, y);
             if (IsEdge(x, y))
             {
-                outside.Add(p);
+                _outside.Add(p);
             }
-            else
-            {
+            else {
                 _queue.Enqueue(p);
             }
         }
@@ -206,9 +233,9 @@ namespace Walle.Model
             return distSqr > _toleranceSquared;
         }
 
-        protected virtual void OnOnLineFound(Point[] line)
+        protected virtual void OnLineFound(Point[] line)
         {
-            var handler = OnLineFound;
+            var handler = LineFound;
             if (handler != null) handler(line);
         }
     }

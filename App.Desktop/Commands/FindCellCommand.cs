@@ -18,7 +18,7 @@ namespace Walle.Commands
         {
             var pt = new System.Drawing.Point((int) startClick.X, (int) startClick.Y);
             var finder = new RegionFinder(_viewModel.Image, pt, _viewModel.Tolerance);
-            finder.OnLineFound +=
+            finder.LineFound +=
                 line => _viewModel.Cells.Add(new CellBoundaries {Points = line.Select(p => new Point(p.X, p.Y)).ToArray()});
             finder.Process();
         }

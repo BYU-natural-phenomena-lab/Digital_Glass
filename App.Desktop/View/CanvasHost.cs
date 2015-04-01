@@ -7,6 +7,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using Walle.Annotations;
 using Walle.Model;
 using Walle.ViewModel;
@@ -83,7 +84,7 @@ namespace Walle.View
             ModelToVisual<CellBoundaries>(sender, e, CreateLineVisual, ref _outlines);
         }
 
-        private void ModelToVisual<T>(object sender, NotifyCollectionChangedEventArgs e, Func<T, DrawingVisual> Creator,
+        private void ModelToVisual<T>(object sender, NotifyCollectionChangedEventArgs e, Func<T, DrawingVisual> creator,
             ref IList<DrawingVisual> layer)
         {
             var collection = sender as ObservableCollection<T>;
@@ -92,7 +93,7 @@ namespace Walle.View
             {
                 case NotifyCollectionChangedAction.Add:
 
-                    var newVisuals = e.NewItems.Cast<T>().Select(Creator);
+                    var newVisuals = e.NewItems.Cast<T>().Select(creator);
                     foreach (var dv in newVisuals)
                     {
                         layer.Add(dv);
@@ -138,20 +139,10 @@ namespace Walle.View
             var dc = dv.RenderOpen();
             for (var i = 1; i < bnd.Points.Length; i++)
             {
-                dc.DrawLine(new Pen(color, 0.5),
+                dc.DrawLine(new Pen(color, 1),
                     new Point(bnd.Points[i].X, bnd.Points[i].Y),
                     new Point(bnd.Points[i - 1].X, bnd.Points[i - 1].Y));
             }
-            //dc.DrawLine(new Pen(Brushes.Tomato, 1), new Point(points[0].X, points[0].Y), new Point(points.Last().X, points.Last().Y));
-
-
-//            foreach (var pt in points)
-//            {
-//                dc.DrawRectangle(Brushes.Red, null, new Rect(new Point(pt.X, pt.Y), new Vector(0.5, 0.5)));
-//            }
-//            var start = points[0];
-//            dc.DrawEllipse(Brushes.Red, null, new Point(start.X-1, start.Y-1),2,2);
-
 
             dc.Close();
             return dv;
