@@ -1,4 +1,5 @@
-﻿<Window x:Class="Walle.MainWindow"
+﻿<!-- Defines the layout of the application GUI. Binds to an instance of MainWindowViewModel -->
+<Window x:Class="Walle.MainWindow"
         x:Name="AppWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"

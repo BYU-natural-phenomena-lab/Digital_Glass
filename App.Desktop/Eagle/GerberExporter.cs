@@ -2,13 +2,24 @@
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using Walle.Properties;
 
 namespace Walle.Eagle
 {
+    /// <summary>
+    /// Generates the files for GERBER PCB assembly.
+    /// This launches a separate process (eaglecon.exe). This is configured in app.config <seealso cref="Settings"/>
+    /// This will first create a temporary Eagle board file and then execute the SeeedStudioCamJob <seealso cref="SeeedStudioCamJob"/>
+    /// </summary>
     public class GerberExporter : EagleExporter
     {
         private string _zip;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="destZipFile">The location to save a zip file of the GERBER files</param>
+        /// <param name="board">The model from which to generate the board</param>
         public GerberExporter(string destZipFile, LedBoardBuilder board)
             :base(GetTempBoardFile(), board)
         {
@@ -40,7 +51,7 @@ namespace Walle.Eagle
                 var pri = new ProcessStartInfo
                 {
                     CreateNoWindow = true,
-                    FileName = @"C:\EAGLE-7.2.0\bin\eaglecon.exe",
+                    FileName = Settings.Default.EagleConsoleExe,
                     Arguments = String.Format(@" -X {0}", step)
                 };
                 Console.WriteLine(pri.Arguments);

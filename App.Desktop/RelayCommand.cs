@@ -4,6 +4,10 @@ using System.Windows.Input;
 
 namespace Walle
 {
+    /// <summary>
+    /// A generic helper class used to bind an arbitrary Action to the ICommand interface.
+    /// Relays the execution of the command object to the Action.
+    /// </summary>
     public class RelayCommand : ICommand
     {
         #region Fields

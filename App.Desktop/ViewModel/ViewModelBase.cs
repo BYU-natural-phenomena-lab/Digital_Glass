@@ -6,11 +6,19 @@ using Walle.Annotations;
 
 namespace Walle.ViewModel
 {
+    /// <summary>
+    /// Provides a common set of event handlers for all View Models to use. It also helps validate property names during debugging.
+    /// </summary>
     public class ViewModelBase : INotifyPropertyChanged, IDisposable
     {
         public virtual string DisplayName { get; protected set; }
         public event PropertyChangedEventHandler PropertyChanged;
 
+        /// <summary>
+        /// Implements property notification. This is a safe way to call the event.
+        /// This is part of the magic that enables two-way binding to XAML apps.
+        /// </summary>
+        /// <param name="propertyName"></param>
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -20,6 +28,10 @@ namespace Walle.ViewModel
 
         protected virtual bool ThrowOnInvalidPropertyName { get; private set; }
 
+        /// <summary>
+        /// Verfies that the property name exists. This is useful for debugging XAML apps.
+        /// </summary>
+        /// <param name="propertyName"></param>
         [Conditional("DEBUG")]
         [DebuggerStepThrough]
         public void VerifyPropertyName(string propertyName)
@@ -54,7 +66,7 @@ namespace Walle.ViewModel
         {
             string msg = string.Format("{0} ({1}) ({2}) Finalized", this.GetType().Name, this.DisplayName,
                 this.GetHashCode());
-            System.Diagnostics.Debug.WriteLine(msg);
+            Debug.WriteLine(msg);
         }
 #endif
     }

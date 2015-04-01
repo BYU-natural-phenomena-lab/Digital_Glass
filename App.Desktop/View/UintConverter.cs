@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Data;
 
 namespace Walle.View
 {
+    /// <summary>
+    /// Thes converter translates between a string and an unsigned integer. Used in WPF to bind to input boxes where the output value must be a uint.
+    /// </summary>
     internal class UintConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

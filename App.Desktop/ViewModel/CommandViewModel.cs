@@ -3,6 +3,9 @@ using System.Windows.Input;
 
 namespace Walle.ViewModel
 {
+    /// <summary>
+    /// Representation of a command in the "File" menu.
+    /// </summary>
     public class CommandViewModel : ViewModelBase
     {
         public CommandViewModel(string displayName, string imageUri, ICommand command)

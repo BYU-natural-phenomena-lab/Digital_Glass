@@ -5,6 +5,9 @@ using Walle.ViewModel;
 
 namespace Walle.Commands
 {
+    /// <summary>
+    /// Finds the path around the region of color that matches the starting point. Adds the cell to the model.
+    /// </summary>
     public class FindCellCommand : ICanvasHostCommand
     {
         private readonly CanvasHostViewModel _viewModel;

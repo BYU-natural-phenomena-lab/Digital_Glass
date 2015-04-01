@@ -1,8 +1,10 @@
-﻿using System;
-using Walle.ViewModel;
+﻿using Walle.ViewModel;
 
 namespace Walle.Commands
 {
+    /// <summary>
+    /// Maps the canvashost mode into which command to execute on click
+    /// </summary>
     public class CanvasHostCommandFactory
     {
         public static ICanvasHostCommand Create(CanvasHostViewModel viewModel,  CanvasHostMode mode)

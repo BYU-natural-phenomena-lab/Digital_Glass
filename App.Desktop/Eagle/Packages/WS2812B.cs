@@ -3,6 +3,11 @@ using System.Xml.Linq;
 
 namespace Walle.Eagle
 {
+    /// <summary>
+    /// http://www.adafruit.com/datasheets/WS2812B.pdf
+    /// A RGB led unit that has a very specific protocol. 
+    /// Chainable via DIN and DOUT.
+    /// </summary>
     public class WS2812B : IPackage
     {
         private readonly IList<string> _pads = new[]

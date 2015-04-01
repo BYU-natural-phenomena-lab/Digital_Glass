@@ -4,6 +4,9 @@ using Walle.ViewModel;
 
 namespace Walle.Commands
 {
+    /// <summary>
+    /// Adds a new LED to the model based on the mouseup event
+    /// </summary>
     public class PlaceLedCommand : ICanvasHostCommand
     {
         private CanvasHostViewModel _viewModel;

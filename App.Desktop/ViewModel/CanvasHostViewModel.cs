@@ -5,15 +5,23 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Walle.Commands;
 using Walle.Model;
+using Point = System.Windows.Point;
 
 namespace Walle.ViewModel
 {
+    /// <summary>
+    /// The model representing the drawing layer of the canvas. This binds to several models and is responsible for updating the canvas when the model updates.
+    /// </summary>
     public class CanvasHostViewModel : ViewModelBase
     {
         private ImageSource _imageSource;
         private Bitmap _image;
         private CanvasHostMode _canvasMode;
 
+        /// <summary>
+        /// Constructs a new model from an specific image source.
+        /// </summary>
+        /// <param name="uri">The file path to the image to load into the background layer</param>
         public CanvasHostViewModel(Uri uri)
         {
             Cells = new ObservableCollection<CellBoundaries>();
@@ -24,6 +32,9 @@ namespace Walle.ViewModel
             _canvasMode = CanvasHostMode.None;
         }
 
+        /// <summary>
+        /// An in-memory representation of the bitmap image background. Used to draw the image in the window. For lower-level image operations and calculates, <see cref="Image"/>
+        /// </summary>
         public ImageSource ImageSource
         {
             get { return _imageSource; }
@@ -34,7 +45,9 @@ namespace Walle.ViewModel
                 OnPropertyChanged();
             }
         }
-
+        /// <summary>
+        /// The tolerance used by the magic wand tool for finding cells. The higher the tolerance, the more forgiving the tool is when searching for boundaries.
+        /// </summary>
         public uint Tolerance
         {
             get { return _tolerance; }
@@ -57,8 +70,12 @@ namespace Walle.ViewModel
         }
 
         private uint _tolerance;
-
-        public void Act(System.Windows.Point startClick, System.Windows.Point endClick)
+        /// <summary>
+        /// General event command
+        /// </summary>
+        /// <param name="startClick">The point where the mouse down event occurred</param>
+        /// <param name="endClick">The point where the mouse up event occurred</param>
+        public void Act(Point startClick, Point endClick)
         {
             var command = CanvasHostCommandFactory.Create(this, _canvasMode);
             if (command == null) return;
@@ -69,6 +86,9 @@ namespace Walle.ViewModel
 
         private bool _processing;
 
+        /// <summary>
+        /// True when a command is executing (asynchronously)
+        /// </summary>
         public bool Processing
         {
             get { return _processing; }
@@ -79,7 +99,9 @@ namespace Walle.ViewModel
                 OnPropertyChanged();
             }
         }
-
+        /// <summary>
+        /// A second, more raw representation of an image. Used for running lower-level image processing. For the higher level wrapper used to paint the image, <see cref="ImageSource"/>
+        /// </summary>
         public Bitmap Image
         {
             get
@@ -88,9 +110,18 @@ namespace Walle.ViewModel
             }
         }
 
+        /// <summary>
+        /// Represents the boundaries of the cells
+        /// </summary>
         public ObservableCollection<CellBoundaries> Cells { get; private set; }
+        /// <summary>
+        /// Represents the location of all LEDS
+        /// </summary>
         public ObservableCollection<Led> Leds { get; private set; }
 
+        /// <summary>
+        /// Which tool is currently being used. Identifies how to respond to clicks.
+        /// </summary>
         public CanvasHostMode CanvasMode
         {
             get { return _canvasMode; }

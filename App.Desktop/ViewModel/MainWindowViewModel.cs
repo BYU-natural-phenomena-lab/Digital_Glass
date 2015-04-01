@@ -1,21 +1,22 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 using Walle.Annotations;
 using Walle.Eagle;
 
 namespace Walle.ViewModel
 {
+    /// <summary>
+    /// Controls the main window of the application.
+    /// <seealso cref="MainWindow.xaml"/>
+    /// </summary>
     public class MainWindowViewModel : ViewModelBase
     {
         private readonly IReadOnlyCollection<CommandViewModel> _commands;
-        private IReadOnlyCollection<CommandViewModel> _toolbarCommands; 
+        private IReadOnlyCollection<CommandViewModel> _toolbarCommands;
         private string _coordinates;
         private CanvasHostViewModel _canvasHost;
 
@@ -25,10 +26,12 @@ namespace Walle.ViewModel
             _toolbarCommands = new ReadOnlyCollection<CommandViewModel>(CreateToolbarCommands());
         }
 
-     
 
         public event Action RequestClose;
 
+        /// <summary>
+        /// Controls the center of the application. The draawing layer.
+        /// </summary>
         public CanvasHostViewModel CanvasHost
         {
             get { return _canvasHost; }
@@ -47,12 +50,18 @@ namespace Walle.ViewModel
             if (handler != null) handler();
         }
 
+        /// <summary>
+        /// Command on the left sidebar of the application
+        /// </summary>
         [UsedImplicitly]
         public IReadOnlyCollection<CommandViewModel> Commands
         {
             get { return _commands; }
         }
 
+        /// <summary>
+        /// Commands in the "File" menu
+        /// </summary>
         [UsedImplicitly]
         public IReadOnlyCollection<CommandViewModel> ToolbarCommands
         {
@@ -65,13 +74,19 @@ namespace Walle.ViewModel
             {
                 new CommandViewModel("Open...", "Resources/folder_Open_32xLG.png",
                     new RelayCommand(param => this.OpenFile())),
-                new CommandViewModel("Export to Eagle BRD...",null,new RelayCommand(param=>this.ExportEagle(),param=>this.ImageLoaded)),
-                new CommandViewModel("Export to Gerber...",null,new RelayCommand(param=>this.ExportGerber(),param=>this.ImageLoaded)),
+                new CommandViewModel("Export to Eagle BRD...", null,
+                    new RelayCommand(param => this.ExportEagle(), param => this.ImageLoaded)),
+                new CommandViewModel("Export to Gerber...", null,
+                    new RelayCommand(param => this.ExportGerber(), param => this.ImageLoaded)),
                 new CommandViewModel("Close...", new RelayCommand(param => this.CloseFile(), param => this.CanClose)),
                 new CommandViewModel("Exit...", "Resources/Close_16xLG.png", new RelayCommand(param => this.CloseApp())),
             };
         }
 
+        /// <summary>
+        /// Creates an in memory representation of an LED PCB using the data from the canvashost model.
+        /// </summary>
+        /// <returns></returns>
         private LedBoardBuilder CreateBoardFromModel()
         {
             var ledBoard = new LedBoardBuilder(this.CanvasHost.BoardWidth, this.CanvasHost.BoardHeight);
@@ -82,6 +97,9 @@ namespace Walle.ViewModel
             return ledBoard;
         }
 
+        /// <summary>
+        /// Runs the export to Gerber and saves all the files in a zip. <seealso cref="README.md"/>
+        /// </summary>
         private void ExportGerber()
         {
             var dialog = new SaveFileDialog();
@@ -91,9 +109,11 @@ namespace Walle.ViewModel
 
             var exporter = new GerberExporter(dialog.FileName, CreateBoardFromModel());
             exporter.Export();
-
         }
 
+        /// <summary>
+        /// Exports only the Eagle board file. This is useful for inspecting manually what the application is generating.
+        /// </summary>
         private void ExportEagle()
         {
             var dialog = new SaveFileDialog();
@@ -102,15 +122,18 @@ namespace Walle.ViewModel
             if (result != true) return;
             var exporter = new EagleExporter(dialog.FileName, CreateBoardFromModel());
             exporter.Export();
-
         }
 
         private IList<CommandViewModel> CreateToolbarCommands()
         {
             return new List<CommandViewModel>
             {
-                new CommandViewModel("Find Cell Boundaries", "Resources/MagicWand_64x.png", new RelayCommand(param=>this.CanvasHost.CanvasMode = CanvasHostMode.FindCell, param=>this.ImageLoaded)),
-                new CommandViewModel("Place LED","Resources/LightBulb_32xMD.png",new RelayCommand(param=>this.CanvasHost.CanvasMode = CanvasHostMode.PlaceLED, param=>this.ImageLoaded))
+                new CommandViewModel("Find Cell Boundaries", "Resources/MagicWand_64x.png",
+                    new RelayCommand(param => this.CanvasHost.CanvasMode = CanvasHostMode.FindCell,
+                        param => this.ImageLoaded)),
+                new CommandViewModel("Place LED", "Resources/LightBulb_32xMD.png",
+                    new RelayCommand(param => this.CanvasHost.CanvasMode = CanvasHostMode.PlaceLED,
+                        param => this.ImageLoaded))
             };
         }
 
@@ -128,6 +151,9 @@ namespace Walle.ViewModel
 
         public bool CanClose { get; set; }
 
+        /// <summary>
+        /// Loads the image file into a new CanvasHost model.
+        /// </summary>
         private void OpenFile()
         {
             var dialog = new OpenFileDialog();

@@ -5,6 +5,10 @@ namespace Walle.Eagle
 {
     public partial class EagleBoard
     {
+        /// <summary>
+        /// Creates the XML contents of an eagle board file
+        /// </summary>
+        /// <returns></returns>
         public XDocument ToXml()
         {
             var doc= new XDocument()
@@ -78,6 +82,10 @@ namespace Walle.Eagle
                 ;
         }
 
+        /// <summary>
+        /// Defines the rectangular outline of the board.
+        /// </summary>
+        /// <returns></returns>
         private XElement GetDimension()
         {
             return new XElement("plain",

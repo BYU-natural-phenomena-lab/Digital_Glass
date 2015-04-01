@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Walle.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="EagleExe" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\EAGLE-7.2.0\bin\eagle.exe</Value>
+    </Setting>
+    <Setting Name="EagleConsoleExe" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\EAGLE-7.2.0\bin\eaglecon.exe</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

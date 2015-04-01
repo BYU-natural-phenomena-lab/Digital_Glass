@@ -5,6 +5,19 @@ using System.Xml.Linq;
 
 namespace Walle.Eagle
 {
+    /// <summary>
+    /// Provides a simple API for creating an EAGLE board from a set of LED locations.
+    /// This board uses an X/Y coordinate system that is measured from the bottom left corner of the board. 
+    ///  ^
+    ///  |   (+x, +y)
+    ///  |  /
+    ///  | /
+    ///  |/___________>
+    /// (0,0)
+    /// 
+    /// Positive x is to the right of the left edge. 
+    /// Positive y is up from the bottom edge. 
+    /// </summary>
     public class LedBoardBuilder
     {
         private readonly EagleBoard _board = new EagleBoard();
@@ -12,10 +25,13 @@ namespace Walle.Eagle
         private readonly IList<Element> _leds = new List<Element>();
 
         /// <summary>
+        /// Create a new board
         /// Pin 1 = GND
         /// Pin 2 = VCC
         /// Pin 3 = Data IN
         /// </summary>
+        /// <param name="width">The width in millimeters</param>
+        /// <param name="height">The height in millimeters</param>
         public LedBoardBuilder(uint width, uint height)
         {
             _board.Width = width;
@@ -23,12 +39,12 @@ namespace Walle.Eagle
             _board.Signals.Add("GND", new Signal());
             _board.Signals.Add("VCC", new Signal());
             _board.Packages.Add(new WS2812B());
-            _board.Packages.Add(new Pinhead5Rot90());
+            _board.Packages.Add(new Pinhead3Rot90());
 
             Pinhead = new Element
             {
                 Name = "LP1",
-                Package = new Pinhead5Rot90(),
+                Package = new Pinhead3Rot90(),
                 X = 5,
                 Y = 15,
                 Rotation = 90
@@ -42,42 +58,37 @@ namespace Walle.Eagle
                 element: Pinhead,
                 padIndex: 1 // VCC
                 );
-
-            // custom part
-            _board.Signals.Add("TOUCH1",new Signal());
-            _board.Signals.Add("TOUCH2",new Signal());
-            _board.Packages.Add(new Pinhead2());
-            var touchPin = new Element()
-            {
-                Name = "LP2",
-                Package = new Pinhead2(),
-                X = 130,
-                Y = 20,
-                Rotation = 0
-            };
-            _board.Elements.Add(touchPin);
-            _board.Signals["TOUCH1"].AddContact(touchPin,0);
-            _board.Signals["TOUCH1"].AddContact(Pinhead,3);
-            _board.Signals["TOUCH2"].AddContact(touchPin,1);
-            _board.Signals["TOUCH2"].AddContact(Pinhead,4);
         }
-
+        /// <summary>
+        /// The LED elements on the board.
+        /// </summary>
         public IReadOnlyList<Element> Leds
         {
             get { return new ReadOnlyCollection<Element>(_leds); }
         }
-
+        /// <summary>
+        /// Produces an XML representation
+        /// </summary>
+        /// <returns>XDocument</returns>
         public XDocument ToXml()
         {
             return _board.ToXml();
         }
-
+        /// <summary>
+        /// Sets the location of the header to which the circuits are connected
+        /// </summary>
+        /// <param name="x">Millimeters</param>
+        /// <param name="y">Millimeters</param>
         public void SetPinheadLocation(double x, double y)
         {
             Pinhead.X = x;
             Pinhead.Y = y;
         }
-
+        /// <summary>
+        /// Add a new LED at these coordinates
+        /// </summary>
+        /// <param name="x">Millimeters</param>
+        /// <param name="y">Millimeters</param>
         public void AddLedAtPoint(double x, double y)
         {
             var newLed = new Element
@@ -100,12 +111,12 @@ namespace Walle.Eagle
             {
                 ledSignal.AddContact(
                     element: _leds.Last(),
-                    padIndex: 1 // DOUT
+                    padIndex: 1 // Data OUT
                     );
             }
             ledSignal.AddContact(
                 element: newLed,
-                padIndex: 3 // DIN
+                padIndex: 3 // Data IN
                 );
 
             _leds.Add(newLed);

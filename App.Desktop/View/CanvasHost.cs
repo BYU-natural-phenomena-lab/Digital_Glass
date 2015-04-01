@@ -7,14 +7,16 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Shapes;
 using Walle.Annotations;
 using Walle.Model;
 using Walle.ViewModel;
 
 namespace Walle.View
 {
-    public partial class CanvasHost : FrameworkElement
+    /// <summary>
+    /// The UI element that draws a CanvasHostViewModel and responds to users clicks.
+    /// </summary>
+    public class CanvasHost : FrameworkElement
     {
         private VisualCollection _children;
         private CanvasHostViewModel _viewModel;
@@ -32,16 +34,30 @@ namespace Walle.View
             this.DataContextChanged += CanvasHost_DataContextChanged;
         }
 
+        /// <summary>
+        /// Calculates the size of the image when rearranging the WPF layout
+        /// </summary>
+        /// <param name="finalSize"></param>
+        /// <returns></returns>
         protected override Size ArrangeOverride(Size finalSize)
         {
             return MeasureArrangeHelper(finalSize);
         }
 
+        /// <summary>
+        /// Calculates how much space to take when WPF is arranging layout
+        /// </summary>
+        /// <param name="availableSize"></param>
+        /// <returns></returns>
         protected override Size MeasureOverride(Size availableSize)
         {
             return MeasureArrangeHelper(availableSize);
         }
-
+        /// <summary>
+        /// Updates the view to match a new model. Updates event handlers and listeners.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CanvasHost_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             var oldDc = e.OldValue as CanvasHostViewModel;
@@ -68,7 +84,11 @@ namespace Walle.View
         {
             ModelToVisual<Led>(sender, e, CreateLedVisual, ref _leds);
         }
-
+        /// <summary>
+        /// Create a visual representation of LEDs
+        /// </summary>
+        /// <param name="led"></param>
+        /// <returns></returns>
         private DrawingVisual CreateLedVisual(Led led)
         {
             var color = Brushes.OrangeRed;
@@ -84,6 +104,35 @@ namespace Walle.View
             ModelToVisual<CellBoundaries>(sender, e, CreateLineVisual, ref _outlines);
         }
 
+        /// <summary>
+        /// Creates a visual for cell boundaries.
+        /// </summary>
+        /// <param name="bnd">The cell boundaries</param>
+        /// <returns></returns>
+        private DrawingVisual CreateLineVisual(CellBoundaries bnd)
+        {
+            var color = NextColor();
+            var dv = new DrawingVisual();
+            var dc = dv.RenderOpen();
+            for (var i = 1; i < bnd.Points.Length; i++)
+            {
+                dc.DrawLine(new Pen(color, 1),
+                    new Point(bnd.Points[i].X, bnd.Points[i].Y),
+                    new Point(bnd.Points[i - 1].X, bnd.Points[i - 1].Y));
+            }
+
+            dc.Close();
+            return dv;
+        }
+
+        /// <summary>
+        /// A generic method to update the visual children to match an ObservableCollection
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <param name="creator"></param>
+        /// <param name="layer"></param>
         private void ModelToVisual<T>(object sender, NotifyCollectionChangedEventArgs e, Func<T, DrawingVisual> creator,
             ref IList<DrawingVisual> layer)
         {
@@ -122,32 +171,10 @@ namespace Walle.View
             this.InvalidateVisual();
         }
 
-        protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
-        {
-            base.OnRenderSizeChanged(sizeInfo);
-            if (_viewModel == null)
-                return;
-            _scale = sizeInfo.NewSize.Height/_viewModel.ImageHeight;
-            this.RenderTransform = GetScaleTransform();
-        }
-
-
-        private DrawingVisual CreateLineVisual(CellBoundaries bnd)
-        {
-            var color = NextColor();
-            var dv = new DrawingVisual();
-            var dc = dv.RenderOpen();
-            for (var i = 1; i < bnd.Points.Length; i++)
-            {
-                dc.DrawLine(new Pen(color, 1),
-                    new Point(bnd.Points[i].X, bnd.Points[i].Y),
-                    new Point(bnd.Points[i - 1].X, bnd.Points[i - 1].Y));
-            }
-
-            dc.Close();
-            return dv;
-        }
-
+        /// <summary>
+        /// Returns a new color everytime it is called. Cycles through a list of colors.
+        /// </summary>
+        /// <returns></returns>
         private Brush NextColor()
         {
             var colors = new List<Brush>
@@ -173,21 +200,44 @@ namespace Walle.View
             return new ScaleTransform(_scale, _scale, 0, 0);
         }
 
+        /// <summary>
+        /// Called by WPF when the window changes.
+        /// </summary>
+        /// <param name="sizeInfo"></param>
+        protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
+        {
+            base.OnRenderSizeChanged(sizeInfo);
+            if (_viewModel == null)
+                return;
+            _scale = sizeInfo.NewSize.Height/_viewModel.ImageHeight;
+            this.RenderTransform = GetScaleTransform();
+        }
 
+        /// <summary>
+        /// Deletes all children elements
+        /// </summary>
         private void ClearCanvas()
         {
             _children.Clear();
             this.InvalidateVisual();
         }
-
+        /// <summary>
+        /// Triggered whenever a property changes. This allows the application to respond to a new application state.
+        /// <seealso cref="UiServices"/>
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Processing")
             {
-                UiServices.SetBusyState();
+                UiServices.SetBusyState(); 
             }
         }
 
+        /// <summary>
+        /// Redraws the image.
+        /// </summary>
         private void UpdateImage()
         {
             if (_viewModel == null || _viewModel.ImageSource == null)
@@ -208,13 +258,19 @@ namespace Walle.View
 
         public Point? StartClick { get; set; }
 
-        // Provide a required override for the VisualChildrenCount property. 
+        /// <summary>
+        /// Required. WPF must know how many visual children this element has. Used in various WPF functionalities.
+        /// </summary>
         protected override int VisualChildrenCount
         {
             get { return _children.Count; }
         }
 
-        // Provide a required override for the GetVisualChild method. 
+        /// <summary>
+        /// Required. Allows WPF to access children directly
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
         protected override Visual GetVisualChild(int index)
         {
             if (index < 0 || index >= _children.Count)
@@ -240,12 +296,14 @@ namespace Walle.View
             _viewModel.Act(StartClick.Value, endClick);
 
 
-            // Initiate the hit test by setting up a hit test result callback method.
+            //TODO Initiate the hit test by setting up a hit test result callback method.
             //            VisualTreeHelper.HitTest(this, null, result => ResultCallback(result, StartClick.Value, pt),
             //                new PointHitTestParameters(StartClick.Value));
         }
 
-        //        private HitTestResultBehavior ResultCallback(HitTestResult result, Point startPoint, Point endPoint)
+        //TODO implement hit testing.
+        // This is how to implement hit testing with with a visual collection
+        // private HitTestResultBehavior ResultCallback(HitTestResult result, Point startPoint, Point endPoint)
         //        {
         //            if (result.VisualHit.GetType() == typeof (DrawingVisual))
         //            {
@@ -272,6 +330,12 @@ namespace Walle.View
         //            // Stop the hit test enumeration of objects in the visual tree. 
         //            return HitTestResultBehavior.Stop;
         //        }
+
+        /// <summary>
+        /// Calculates the way to maximize alloated screenspace to show an image and preserve its aspect ratio.
+        /// </summary>
+        /// <param name="inputSize"></param>
+        /// <returns></returns>
         private Size MeasureArrangeHelper(Size inputSize)
         {
             if (_viewModel == null || _viewModel.ImageSource == null)
@@ -285,7 +349,12 @@ namespace Walle.View
             // Returns our minimum size & sets DesiredSize.
             return new Size(naturalSize.Width*scaleFactor.Width, naturalSize.Height*scaleFactor.Height);
         }
-
+        /// <summary>
+        /// Compute how to scale the image without messing up its aspect ratio
+        /// </summary>
+        /// <param name="availableSize"></param>
+        /// <param name="contentSize"></param>
+        /// <returns></returns>
         private static Size ComputeScaleFactor(Size availableSize,
             Size contentSize)
         {

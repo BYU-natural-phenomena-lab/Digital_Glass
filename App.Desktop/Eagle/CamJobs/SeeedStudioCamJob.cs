@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 
 namespace Walle.Eagle
 {
+    /// <summary>
+    /// Produces the files SeeedStudio needs to assemble a PCB
+    /// http://www.seeedstudio.com/service/index.php?r=pcb
+    /// http://support.seeedstudio.com/knowledgebase/articles/422482-fusion-pcb-order-submission-guidelines
+    /// </summary>
     public class SeeedStudioCamJob : ICamJob
     {
         public SeeedStudioCamJob(string boardPath, string outDir)

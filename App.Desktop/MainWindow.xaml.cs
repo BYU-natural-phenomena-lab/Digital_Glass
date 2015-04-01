@@ -1,6 +1,4 @@
 ﻿using System.Windows;
-using System.Windows.Input;
-using Walle.ViewModel;
 
 namespace Walle
 {

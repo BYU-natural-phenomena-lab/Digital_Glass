@@ -3,6 +3,9 @@ using System.Xml.Linq;
 
 namespace Walle.Eagle
 {
+    /// <summary>
+    /// A 2 pin header
+    /// </summary>
     public class Pinhead2 : IPackage
     {
         private readonly IList<string> _pads = new[]

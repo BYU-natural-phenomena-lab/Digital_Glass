@@ -5,7 +5,17 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Desktop", "App.Desktop\App.Desktop.csproj", "{AB25D2DD-DC37-4277-A12E-E72E090883C4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApplication1", "ConsoleApplication1\ConsoleApplication1.csproj", "{21C932A0-C594-40D8-BAC4-5DD4255CE82C}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0F856C09-B4F8-4C3A-9864-7AA5669E9C62}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{C59137E2-EFB3-4DAC-A09E-C73A03E120C1}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +27,6 @@ Global
 		{AB25D2DD-DC37-4277-A12E-E72E090883C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB25D2DD-DC37-4277-A12E-E72E090883C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AB25D2DD-DC37-4277-A12E-E72E090883C4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{21C932A0-C594-40D8-BAC4-5DD4255CE82C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{21C932A0-C594-40D8-BAC4-5DD4255CE82C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{21C932A0-C594-40D8-BAC4-5DD4255CE82C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{21C932A0-C594-40D8-BAC4-5DD4255CE82C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

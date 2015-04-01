@@ -3,6 +3,9 @@ using System.Xml.Linq;
 
 namespace Walle.Eagle
 {
+    /// <summary>
+    /// 3 pins, rotated at 90 degrees
+    /// </summary>
     public class Pinhead3Rot90 : IPackage
     {
         private readonly IList<string> _pads = new[]
