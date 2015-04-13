@@ -3,7 +3,7 @@ Walle
 
 This project contains a simple GUI for helping artists create digital stained glass.
 
-# Getting started
+# Getting started with the desktop app
 
 You will need Visual Studio to build this application.
 
@@ -18,6 +18,9 @@ But this should have been setup automatically by the build process.
 How to generate the documentation: 
 http://gusclass.com/blog/2013/02/25/creating-html-documentation-in-c-using-visual-studio-and-sandcastle/
 https://github.com/EWSoftware/SHFB
+
+# Getting started with the Arduino code
+The folder *arduino_code* contains the files necessary to run animation on a board using an Arduino. It also includes preliminary support for touch sensors, but it needs more work.
 
 # Application Overview
 
@@ -51,10 +54,8 @@ This application uses the MVVM architecture. [WPF Apps with MVVM Design Pattern]
 
 # Future work
 
-* Gerber export
-
-## What doesn't work yet
-
+* Gerber export for multiple PCB manufacturers. 
+* An idea for better touch sensing: https://learn.sparkfun.com/tutorials/mpr121-hookup-guide
 * The cell tool finds the outline of a cell (most of the time) but it does not use this information to produce the laser cutting guide.
 * The GUI doesn't show well which tool is selected.
 * The tools does not generate a second "touch" board. This is supposed to contain large copper regions that can be used for capacitive touch.
