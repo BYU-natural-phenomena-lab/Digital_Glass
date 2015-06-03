@@ -70,6 +70,9 @@ namespace Walle.ViewModel
         }
 
         private uint _tolerance;
+        private double _boardWidth;
+        private double _boardHeight;
+
         /// <summary>
         /// General event command
         /// </summary>
@@ -133,23 +136,60 @@ namespace Walle.ViewModel
             }
         }
 
+
+        /// <summary>
+        /// The width of the board. Allows the board to scale
+        /// </summary>
         public uint BoardWidth
         {
-            get
-            {
+            get {
                 //TODO scale the board to custom size
-                return (uint) this.ImageWidth;
+               if(_boardWidth == 0)
+                    _boardWidth = this.ImageWidth;
+
+                return (uint) _boardWidth; 
+            }
+            set
+            {
+                if (value - _boardWidth < 2 && value - _boardWidth > -2)
+                {
+                    OnPropertyChanged();
+                    return;
+                }
+                _boardWidth = value;
+                double ratio = ((double)(this.ImageHeight) / (double)(this.ImageWidth));
+                BoardHeight = (uint) (ratio * value);
+                OnPropertyChanged();
             }
         }
 
+        /// <summary>
+        /// The height of the board. Allows the board to scale
+        /// </summary>
         public uint BoardHeight
         {
-            get
-            {
+            get {
                 //TODO scale the board to custom size
-                return (uint) this.ImageHeight;
+
+                if (_boardHeight == 0)
+                    _boardHeight = this.ImageHeight;
+               
+                return (uint) _boardHeight;
+            }
+            set
+            {
+                if (value - _boardHeight < 2 && value - _boardHeight > -2)
+                {
+                    OnPropertyChanged();
+                    return;
+                }
+                _boardHeight = value;
+                double ratio = ((double)(this.ImageWidth) / (double)(this.ImageHeight));
+                BoardWidth = (uint) (ratio * value);
+                OnPropertyChanged();
             }
         }
+
     }
 
     public enum CanvasHostMode

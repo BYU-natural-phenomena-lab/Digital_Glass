@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Walle
 {
@@ -7,6 +9,11 @@ namespace Walle
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+          //  throw new NotImplementedException();
         }
     }
 }

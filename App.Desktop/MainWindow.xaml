@@ -34,6 +34,14 @@
                 <TextBox DataContext="{Binding Path=CanvasHost}"
                          Text="{Binding Path=Tolerance,Mode=TwoWay,Converter={StaticResource UintConverter}, UpdateSourceTrigger=PropertyChanged}"
                          Width="50" Height="20" TextAlignment="Right" />
+                <Label Height="26" Content="Width" Width="51"/>
+                <TextBox DataContext="{Binding Path=CanvasHost}"
+                	    Text="{Binding Path=BoardWidth,Mode=TwoWay,Converter={StaticResource UintConverter}, UpdateSourceTrigger=PropertyChanged}"
+                	    Width="50" Height="20" TextAlignment="Right" />
+                <Label Height="26" Content="Height" Width="46"/>
+                <TextBox DataContext="{Binding Path=CanvasHost}"
+                         Text="{Binding Path=BoardHeight,Mode=TwoWay,Converter={StaticResource UintConverter}, UpdateSourceTrigger=PropertyChanged}"
+                         Width="50" Height="20" TextAlignment="Right" />
             </StackPanel>
         </DockPanel>
         <DockPanel Background="Gray">
