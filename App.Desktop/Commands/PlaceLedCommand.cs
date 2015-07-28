@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Media;
+using System.Windows;
 using Walle.Model;
 using Walle.ViewModel;
 
@@ -18,11 +19,28 @@ namespace Walle.Commands
 
         public void Execute(Point startClick, Point endClick)
         {
-            _viewModel.Leds.Add(new Led
+            Animation a = Animation.getInstance();
+            if (!a.PointInCell(startClick))
             {
-                X = endClick.X,
-                Y = endClick.Y
-            });
+                //Create Cell to Place LED in
+                SystemSounds.Beep.Play();
+                var command = CanvasHostCommandFactory.Create(_viewModel, CanvasHostMode.PlaceLEDWithoutCell);
+                command.Execute(startClick, endClick);
+
+                a.ToString();
+            }
+
+            Cell c = a.findCell(startClick);
+
+            Led l = new Led
+            {
+                 X = endClick.X,
+                 Y = endClick.Y
+            };
+
+            _viewModel.Leds.Add(l);
+            c.addLed(l);
+
         }
     }
 }

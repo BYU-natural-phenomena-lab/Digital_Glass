@@ -1,4 +1,5 @@
-﻿using Walle.ViewModel;
+﻿using System.Drawing;
+using Walle.ViewModel;
 
 namespace Walle.Commands
 {
@@ -11,16 +12,24 @@ namespace Walle.Commands
         {
             switch (mode)
             {
-                case CanvasHostMode.FindCell:
+                case CanvasHostMode.ColorFill:
                     return new FindCellCommand(viewModel);
 
                 case CanvasHostMode.PlaceLED:
                     return new PlaceLedCommand(viewModel);
 
+                case CanvasHostMode.CreateTouchRegion:
+                    return new CreateTouchRegionCommand(viewModel);
+
+                case CanvasHostMode.PlaceLEDWithoutCell:
+                    return new FindCellCommand(viewModel, Color.Black);
+
                 case CanvasHostMode.None:
                 default:
                     return null;
             }
+
+
         }
     }
 }

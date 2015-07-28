@@ -12,7 +12,7 @@ namespace Walle.Eagle
             _layers = new Dictionary<int, string>
             {
                 {1, "Top"}, // elements on top of the board
-                {16, "Bottom"}, // elements on the bottom of hte board
+                {16, "Bottom"}, // elements on the bottom of the board
                 {17, "Pads"}, // defineds the pads for all SMD
                 {18, "Vias"}, // holes through the board, to connect traces on the bottom/top
                 {20, "Dimension"}, // size of the board

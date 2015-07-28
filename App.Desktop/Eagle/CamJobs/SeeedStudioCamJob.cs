@@ -20,18 +20,18 @@ namespace Walle.Eagle
 
         private static readonly List<string> Args = new List<string>
         {
-            "-dGERBER_RS274X -o\"{0}\".gml {1} 20 46", // outline
-            "-dEXCELLON -o\"{0}\"txt {1} 20 44 45", // drilling
+            "-dGERBER_RS274X -o\"{0}\".gml \"{1}\" 20 46", // outline
+            "-dEXCELLON -o\"{0}\"txt \"{1}\" 20 44 45", // drilling
 
-            "-dGERBER_RS274X -o\"{0}\".gtl {1} 1 17 18 20", // top layer
-            "-dGERBER_RS274X -o\"{0}\".gtp {1} 20 31", // top pad
-            "-dGERBER_RS274X -o\"{0}\".gts {1} 20 29", //top solder
-            "-dGERBER_RS274X -o\"{0}\".gto {1} 20 21 25", // top silkscreen
-                               
-            "-dGERBER_RS274X -o\"{0}\".gbl {1} 16 17 18 20", // bottom layer
-            "-dGERBER_RS274X -o\"{0}\".gbp {1} 20 32", // bottom pad
-            "-dGERBER_RS274X -o\"{0}\".gbs {1} 20 30", // bottom solder
-            "-dGERBER_RS274X -o\"{0}\".gbo {1} 20 22 26", // bottom silkscreen
+            "-dGERBER_RS274X -o\"{0}\".gtl \"{1}\" 1 17 18 20", // top layer
+            "-dGERBER_RS274X -o\"{0}\".gtp \"{1}\" 20 31", // top pad
+            "-dGERBER_RS274X -o\"{0}\".gts \"{1}\" 20 29", //top solder
+            "-dGERBER_RS274X -o\"{0}\".gto \"{1}\" 20 21 25", // top silkscreen
+                                             
+            "-dGERBER_RS274X -o\"{0}\".gbl \"{1}\" 16 17 18 20", // bottom layer
+            "-dGERBER_RS274X -o\"{0}\".gbp \"{1}\" 20 32", // bottom pad
+            "-dGERBER_RS274X -o\"{0}\".gbs \"{1}\" 20 30", // bottom solder
+            "-dGERBER_RS274X -o\"{0}\".gbo \"{1}\" 20 22 26", // bottom silkscreen
         };
 
         private readonly string _outfileRootPath;

@@ -1,13 +1,13 @@
 ﻿<!-- Defines the layout of the application GUI. Binds to an instance of MainWindowViewModel -->
 <Window x:Class="Walle.MainWindow"
         x:Name="AppWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"     
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:view="clr-namespace:Walle.View" xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModel="clr-namespace:Walle.ViewModel"
         mc:Ignorable="d"
-        Title="Walle" Height="564" Width="792" d:DataContext="{d:DesignInstance viewModel:MainWindowViewModel}">
+        Title="Walle" Height="564" Width="792" MinWidth="240" d:DataContext="{d:DesignInstance viewModel:MainWindowViewModel}">
     <Window.Resources>
         <ResourceDictionary Source="MainWindowResources.xaml" />
     </Window.Resources>
@@ -44,6 +44,7 @@
                          Width="50" Height="20" TextAlignment="Right" />
             </StackPanel>
         </DockPanel>
+
         <DockPanel Background="Gray">
             <view:CanvasHost x:Name="MainCanvas" Visibility="Visible" Margin="20"
                              DataContext="{Binding Path=CanvasHost}">
@@ -51,6 +52,43 @@
                     <DropShadowEffect ShadowDepth="0" BlurRadius="30" Opacity="0.55" />
                 </view:CanvasHost.Effect>
             </view:CanvasHost>
+
+            <ListBox x:Name="frameListView" Width="150" HorizontalAlignment="Right" Background="WhiteSmoke"  DataContext="{Binding Path=CanvasHost}" ItemsSource="{Binding Path=frames}">
+                <ListBoxItem>
+                    <StackPanel Orientation="Horizontal" Margin="4">
+                        <TextBlock Margin="4" Width="50">Frame</TextBlock>
+                        <TextBlock Margin="4">Delay</TextBlock>
+                        <TextBlock Margin="4">Goto</TextBlock>
+                    </StackPanel>
+                </ListBoxItem>
+                
+                <ListBoxItem>
+                    <StackPanel Orientation="Horizontal" Margin="4">
+                        <TextBlock Margin="6">Frame 1</TextBlock>
+                        <TextBox Margin="4">100</TextBox>
+                        <TextBox Margin="4">-1</TextBox>
+                    </StackPanel>
+                </ListBoxItem>
+
+                <ListBoxItem>
+                    <StackPanel Orientation="Horizontal"  Margin="4">
+                        <Button HorizontalAlignment="Center">Add Frame</Button>
+                    </StackPanel>
+                </ListBoxItem>
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" Margin="4">
+                            <TextBlock Margin="6" Text="{Binding frameNumber}"/>
+                            <TextBox Margin="4" Text="{Binding delay}"/>
+                            <TextBox Margin="4" Text="{Binding goto}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+
+                
+            </ListBox>
+            
         </DockPanel>
     </DockPanel>
 </Window>

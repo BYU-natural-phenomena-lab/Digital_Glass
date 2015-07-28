@@ -18,14 +18,39 @@ namespace Walle.ViewModel
         private Bitmap _image;
         private CanvasHostMode _canvasMode;
 
+        internal int currentFrame { get; private set; }
+        internal Animation animation;
+        /// <summary>
+        /// Scales the 
+        /// </summary>
+        public double imageToOutputScale { get; private set; } = 1;
+
+        internal void moveToFrame(int frameNum)
+        {
+            if (currentFrame == frameNum) return;
+
+            currentFrame = frameNum;
+            OnPropertyChanged();
+
+        }
+
+
         /// <summary>
         /// Constructs a new model from an specific image source.
         /// </summary>
         /// <param name="uri">The file path to the image to load into the background layer</param>
         public CanvasHostViewModel(Uri uri)
         {
-            Cells = new ObservableCollection<CellBoundaries>();
+            animation = Animation.getInstance();
+
+            Cells = new ObservableCollection<Cell>();
             Leds = new ObservableCollection<Led>();
+            Frames = new ObservableCollection<Frame>();
+            TouchRegions = new ObservableCollection<TouchRegion>();
+
+            currentFrame = 0;
+            animation.addFrame(new Frame());
+
             ImageSource = new BitmapImage(uri);
             _image = new Bitmap(uri.LocalPath);
             Tolerance = 30;
@@ -116,11 +141,30 @@ namespace Walle.ViewModel
         /// <summary>
         /// Represents the boundaries of the cells
         /// </summary>
-        public ObservableCollection<CellBoundaries> Cells { get; private set; }
+        public ObservableCollection<Cell> Cells { get; private set; }
+
+//        internal System.Windows.Media.Color getCellColor(Cell c)
+//        {
+//            ColorCell colorCell = currentFrame.getCellColor(animation.getCellNumber(c));
+//            return System.Windows.Media.Color.FromArgb(colorCell.color.A, colorCell.color.R, colorCell.color.G, colorCell.color.B);
+//
+ //       }
+
+
         /// <summary>
         /// Represents the location of all LEDS
         /// </summary>
         public ObservableCollection<Led> Leds { get; private set; }
+
+        /// <summary>
+        /// Represents the location of all LEDS
+        /// </summary>
+        public ObservableCollection<TouchRegion> TouchRegions { get; private set; }
+
+        /// <summary>
+        /// Represents the location of all the Frames
+        /// </summary>
+        internal ObservableCollection<Frame> Frames { get; private set; }
 
         /// <summary>
         /// Which tool is currently being used. Identifies how to respond to clicks.
@@ -156,9 +200,13 @@ namespace Walle.ViewModel
                     OnPropertyChanged();
                     return;
                 }
+
+                imageToOutputScale = (double)(value) / (double)(this.ImageWidth);
+                 
                 _boardWidth = value;
                 double ratio = ((double)(this.ImageHeight) / (double)(this.ImageWidth));
                 BoardHeight = (uint) (ratio * value);
+                //BoardHeight = (uint)(BoardHeight * imageToOutputScale);
                 OnPropertyChanged();
             }
         }
@@ -183,6 +231,9 @@ namespace Walle.ViewModel
                     OnPropertyChanged();
                     return;
                 }
+
+                imageToOutputScale = (double)(value) / (double)(this.ImageHeight);
+
                 _boardHeight = value;
                 double ratio = ((double)(this.ImageWidth) / (double)(this.ImageHeight));
                 BoardWidth = (uint) (ratio * value);
@@ -195,7 +246,9 @@ namespace Walle.ViewModel
     public enum CanvasHostMode
     {
         None,
-        FindCell,
-        PlaceLED
+        ColorFill,
+        PlaceLED,
+        CreateTouchRegion,
+        PlaceLEDWithoutCell,
     }
 }

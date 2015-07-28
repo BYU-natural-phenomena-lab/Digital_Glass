@@ -85,6 +85,7 @@ namespace Walle.Commands
                 _queue.Enqueue(startPoint);
                 _considered = new PixelTracker(_image.Width, _image.Height) {OutsideDefault = true};
                 _considered.Add(startPoint.X, startPoint.Y);
+                _fill.Add(startPoint);
             }
             catch (ArgumentOutOfRangeException ex)
             {
@@ -120,6 +121,22 @@ namespace Walle.Commands
             return distSqr > _toleranceSquared;
         }
 
+        /// <summary>
+        /// Calculates the color difference between the starting point <seealso cref="RegionFinder"/>. Uses tolerance to decide if the color is similar enough to be considered within the same cell.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        private bool IsInside(int x, int y)
+        {
+            if (x < 0 || x >= _image.Width) return true;
+            if (y < 0 || y >= _image.Height) return true;
+            var color = _image.GetPixel(x, y);
+            var distSqr = Math.Pow(_baseColor.R - color.R, 2) + Math.Pow(_baseColor.G - color.G, 2) +
+                          Math.Pow(_baseColor.B - color.B, 2);
+            return distSqr < 10;
+        }
+
         protected virtual void OnLineFound(Point[] line)
         {
             var handler = LineFound;
@@ -148,13 +165,16 @@ namespace Walle.Commands
             }
             points.AddRange(LeastCostPath(edgePoints[0], edgePoints[edgePoints.Count - 1]));
 
-
+            //Add all pixels inside the cell
+            points.AddRange(_fill);
+            
             OnLineFound(points.ToArray());
         }
 
         #region Finds boundary pixels
 
         private ISet<Point> _outside = new System.Collections.Generic.HashSet<Point>();
+        private ISet<Point> _fill = new System.Collections.Generic.HashSet<Point>();
 
         /// <summary>
         /// Finds the boundary pixels, but not in winding order.
@@ -185,8 +205,10 @@ namespace Walle.Commands
             {
                 _outside.Add(p);
             }
-            else
+            else 
             {
+                //Is inside
+                _fill.Add(p);
                 _queue.Enqueue(p);
             }
         }

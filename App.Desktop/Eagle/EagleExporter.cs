@@ -42,7 +42,7 @@ namespace Walle.Eagle
             {
                 CreateNoWindow = true,
                 FileName =  Settings.Default.EagleExe,
-                Arguments = String.Format(@" -C 'ripup *; auto *; write; quit;' {0}", '\"' + boardFile + '\"') 
+                Arguments = String.Format(@" -C 'ripup *; auto *; write;' {0}", '\"' + boardFile + '\"') // quit;
                 // -C executes these eagle commands
                 // ripup destroys an previous autorouting
                 // auto runs the autorouter

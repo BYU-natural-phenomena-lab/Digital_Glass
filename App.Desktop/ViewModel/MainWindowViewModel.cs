@@ -6,6 +6,7 @@ using System.Windows.Input;
 using Microsoft.Win32;
 using Walle.Annotations;
 using Walle.Eagle;
+using Walle.Model;
 
 namespace Walle.ViewModel
 {
@@ -20,6 +21,7 @@ namespace Walle.ViewModel
         private string _coordinates;
         private CanvasHostViewModel _canvasHost;
 
+
         public MainWindowViewModel()
         {
             _commands = new ReadOnlyCollection<CommandViewModel>(CreateCommands());
@@ -30,7 +32,7 @@ namespace Walle.ViewModel
         public event Action RequestClose;
 
         /// <summary>
-        /// Controls the center of the application. The draawing layer.
+        /// Controls the center of the application. The drawing layer.
         /// </summary>
         public CanvasHostViewModel CanvasHost
         {
@@ -90,10 +92,18 @@ namespace Walle.ViewModel
         private LedBoardBuilder CreateBoardFromModel()
         {
             var ledBoard = new LedBoardBuilder(this.CanvasHost.BoardWidth, this.CanvasHost.BoardHeight);
-            foreach (var led in this.CanvasHost.Leds)
+            Animation a = Animation.getInstance();
+            foreach (var led in a.getLeds())
             {
-                ledBoard.AddLedAtPoint(led.X, this._canvasHost.ImageHeight - led.Y); // transform to board space
+                ledBoard.AddLedAtPoint(led.X * _canvasHost.imageToOutputScale, (this._canvasHost.ImageHeight - led.Y) * _canvasHost.imageToOutputScale); // transform to board space
             }
+            ledBoard.attachToOutputPin();
+
+            foreach(var touchRegion in a.touchRegions)
+            {
+                ledBoard.AddTouchPadAtPoint(touchRegion.X * _canvasHost.imageToOutputScale, (this._canvasHost.ImageHeight - touchRegion.Y) * _canvasHost.imageToOutputScale);
+            }
+      
             return ledBoard;
         }
 
@@ -128,12 +138,17 @@ namespace Walle.ViewModel
         {
             return new List<CommandViewModel>
             {
-                new CommandViewModel("Find Cell Boundaries", "Resources/MagicWand_64x.png",
-                    new RelayCommand(param => this.CanvasHost.CanvasMode = CanvasHostMode.FindCell,
-                        param => this.ImageLoaded)),
                 new CommandViewModel("Place LED", "Resources/LightBulb_32xMD.png",
                     new RelayCommand(param => this.CanvasHost.CanvasMode = CanvasHostMode.PlaceLED,
-                        param => this.ImageLoaded))
+                        param => this.ImageLoaded)),
+
+                new CommandViewModel("Choose Colors", "Resources/PaintBucket.ico",
+                    new RelayCommand(param => this.CanvasHost.CanvasMode = CanvasHostMode.ColorFill,
+                        param => this.ImageLoaded)),
+            
+                new CommandViewModel("Create Touch Region", "Resources/fingerTouch.png",
+                    new RelayCommand(param => this.CanvasHost.CanvasMode = CanvasHostMode.CreateTouchRegion,
+                        param => this.ImageLoaded)),
             };
         }
 

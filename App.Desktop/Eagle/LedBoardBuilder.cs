@@ -22,7 +22,9 @@ namespace Walle.Eagle
     {
         private readonly EagleBoard _board = new EagleBoard();
         public Element Pinhead { get; private set; }
+        public Element PinheadOut { get; private set; }
         private readonly IList<Element> _leds = new List<Element>();
+        private readonly IList<Element> _touchPads = new List<Element>();
 
         /// <summary>
         /// Create a new board
@@ -40,6 +42,7 @@ namespace Walle.Eagle
             _board.Signals.Add("VCC", new Signal());
             _board.Packages.Add(new WS2812B());
             _board.Packages.Add(new Pinhead3Rot90());
+            _board.Packages.Add(new PinheadSingle());
 
             Pinhead = new Element
             {
@@ -58,6 +61,27 @@ namespace Walle.Eagle
                 element: Pinhead,
                 padIndex: 1 // VCC
                 );
+
+            //Board Out
+            PinheadOut = new Element
+            {
+                Name = "LP2",
+                Package = new Pinhead3Rot90(),
+                X = width - 5,
+                Y = 15,
+                Rotation = 270
+            };
+
+            _board.Elements.Add(PinheadOut);
+            _board.Signals["GND"].AddContact(
+            element: PinheadOut,
+            padIndex: 2 // GND
+            );
+            _board.Signals["VCC"].AddContact(
+                element: PinheadOut,
+                padIndex: 1 // VCC
+                );
+
         }
         /// <summary>
         /// The LED elements on the board.
@@ -102,6 +126,7 @@ namespace Walle.Eagle
             var ledSignal = new Signal();
             if (_leds.Count == 0)
             {
+                //Connect to input pad
                 ledSignal.AddContact(
                     element: Pinhead,
                     padIndex: 2 // Data
@@ -131,6 +156,72 @@ namespace Walle.Eagle
                 element: newLed,
                 padIndex: 2 // GND
                 );
+        }
+
+        /// <summary>
+        /// Add a new Touch Pad at these coordinates
+        /// </summary>
+        /// <param name="x">Millimeters</param>
+        /// <param name="y">Millimeters</param>
+        public void AddTouchPadAtPoint(double x, double y)
+        {
+            var newTouchPad = new Element
+            {
+                Name = "T" + (_touchPads.Count),
+                Package = new PinheadSingle(),
+                X = x,
+                Y = y,
+                Rotation = 90
+            };
+
+            var newTouchPadOut = new Element
+            {
+                Name = _touchPads.Count + "",
+                Package = new PinheadSingle(),
+                X = 5 + 3.81,
+                Y = 15 + 5.08 + (_touchPads.Count * 2.54), //Places output above the 
+                Rotation = 90
+            };
+
+            _touchPads.Add(newTouchPad);
+
+            var padSignal = new Signal();
+
+
+            padSignal.AddContact(
+                   element: newTouchPad,
+                   padIndex: 0 
+                   );
+            padSignal.AddContact(
+                   element: newTouchPadOut,
+                   padIndex: 0
+                   );
+
+            _board.Elements.Add(newTouchPad);
+            _board.Elements.Add(newTouchPadOut);
+
+            _board.Signals.Add("N$" + newTouchPad.Name, padSignal);
+
+
+        }
+        /// <summary>
+        /// Ataches the data pin of the last LED to PinheadOut
+        /// </summary>
+        public void attachToOutputPin()
+        {
+            var ledSignal = new Signal();
+
+            ledSignal.AddContact(
+                    element: _leds.Last(),
+                    padIndex: 1 // Data OUT
+                    );
+
+            ledSignal.AddContact(
+                  element: PinheadOut,
+                  padIndex: 0 // Data
+                  );
+
+            _board.Signals.Add("LP2", ledSignal);
         }
     }
 }

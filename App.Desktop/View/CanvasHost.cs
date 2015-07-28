@@ -34,6 +34,7 @@ namespace Walle.View
             this.DataContextChanged += CanvasHost_DataContextChanged;
         }
 
+
         /// <summary>
         /// Calculates the size of the image when rearranging the WPF layout
         /// </summary>
@@ -41,7 +42,8 @@ namespace Walle.View
         /// <returns></returns>
         protected override Size ArrangeOverride(Size finalSize)
         {
-            return MeasureArrangeHelper(finalSize);
+            //finalSize.Height = 0;
+            return MeasureArrangeHelper(finalSize);           
         }
 
         /// <summary>
@@ -51,6 +53,7 @@ namespace Walle.View
         /// <returns></returns>
         protected override Size MeasureOverride(Size availableSize)
         {
+            availableSize.Width = Math.Max(0, availableSize.Width - 150); // Provides room for animation bar (size 150)
             return MeasureArrangeHelper(availableSize);
         }
         /// <summary>
@@ -67,6 +70,7 @@ namespace Walle.View
                 oldDc.PropertyChanged -= ViewModelPropertyChanged;
                 oldDc.Cells.CollectionChanged -= DrawOutline;
                 oldDc.Leds.CollectionChanged -= DrawLed;
+                oldDc.TouchRegions.CollectionChanged -= DrawTouchRegion;
             }
 
             _viewModel = e.NewValue as CanvasHostViewModel;
@@ -77,6 +81,7 @@ namespace Walle.View
             _viewModel.PropertyChanged += ViewModelPropertyChanged;
             _viewModel.Cells.CollectionChanged += DrawOutline;
             _viewModel.Leds.CollectionChanged += DrawLed;
+            _viewModel.TouchRegions.CollectionChanged += DrawTouchRegion;
             UpdateImage();
         }
 
@@ -84,6 +89,12 @@ namespace Walle.View
         {
             ModelToVisual<Led>(sender, e, CreateLedVisual, ref _leds);
         }
+
+        private void DrawTouchRegion(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            ModelToVisual<TouchRegion>(sender, e, CreateTouchRegtionVisual, ref _leds);
+        }
+
         /// <summary>
         /// Create a visual representation of LEDs
         /// </summary>
@@ -99,9 +110,26 @@ namespace Walle.View
             return dv;
         }
 
+        /// <summary>
+        /// Create a visual representation of LEDs
+        /// </summary>
+        /// <param name="touchRegion"></param>
+        /// <returns></returns>
+        private DrawingVisual CreateTouchRegtionVisual(TouchRegion touchRegion)
+        {
+            var color1 = Brushes.LightBlue;
+            var color2 = Brushes.Black;
+            var dv = new DrawingVisual();
+            var dc = dv.RenderOpen();
+            dc.DrawEllipse(color1, null, new Point(touchRegion.X, touchRegion.Y), 8, 8);
+            dc.DrawText(new FormattedText(touchRegion.number + "", new System.Globalization.CultureInfo("en-US") , new FlowDirection(), new Typeface("arial"), 7, color2), new Point(touchRegion.X - 2.5, touchRegion.Y - 4));
+            dc.Close();
+            return dv;
+        }
+
         private void DrawOutline(object sender, NotifyCollectionChangedEventArgs e)
         {
-            ModelToVisual<CellBoundaries>(sender, e, CreateLineVisual, ref _outlines);
+            ModelToVisual<Cell>(sender, e, CreateLineVisual, ref _outlines);
         }
 
         /// <summary>
@@ -109,16 +137,25 @@ namespace Walle.View
         /// </summary>
         /// <param name="bnd">The cell boundaries</param>
         /// <returns></returns>
-        private DrawingVisual CreateLineVisual(CellBoundaries bnd)
+        private DrawingVisual CreateLineVisual(Cell bnd)
         {
-            var color = NextColor();
+            int frame = _viewModel.currentFrame;
+            Color newColor = System.Windows.Media.Color.FromArgb(bnd.color[frame].A, bnd.color[frame].R, bnd.color[frame].G, bnd.color[frame].B); //_viewModel.getCellColor(bnd);
+            var color = new SolidColorBrush(newColor); //Set to selected color
             var dv = new DrawingVisual();
             var dc = dv.RenderOpen();
-            for (var i = 1; i < bnd.Points.Length; i++)
+            for (var i = 0; i < bnd.Points.Length; i++)
             {
+
+                //Draw the points intsead of a line
                 dc.DrawLine(new Pen(color, 1),
-                    new Point(bnd.Points[i].X, bnd.Points[i].Y),
-                    new Point(bnd.Points[i - 1].X, bnd.Points[i - 1].Y));
+                   new Point(bnd.Points[i].X, bnd.Points[i].Y),
+                   new Point(bnd.Points[i].X+1, bnd.Points[i].Y+1));
+
+                //Code to draw a line - cange for to start with 1
+                // dc.DrawLine(new Pen(color, 1),
+                //     new Point(bnd.Points[i].X, bnd.Points[i].Y),
+                //     new Point(bnd.Points[i - 1].X, bnd.Points[i - 1].Y));
             }
 
             dc.Close();
@@ -170,29 +207,6 @@ namespace Walle.View
             }
             this.InvalidateVisual();
         }
-
-        /// <summary>
-        /// Returns a new color everytime it is called. Cycles through a list of colors.
-        /// </summary>
-        /// <returns></returns>
-        private Brush NextColor()
-        {
-            var colors = new List<Brush>
-            {
-                Brushes.Red,
-                Brushes.Orange,
-                Brushes.Gold,
-                Brushes.Turquoise,
-                Brushes.Green,
-                Brushes.Blue,
-                Brushes.Violet
-            };
-            idx++;
-            if (idx >= colors.Count)
-                idx = 0;
-            return colors[idx];
-        }
-
 
         [NotNull]
         private ScaleTransform GetScaleTransform()
