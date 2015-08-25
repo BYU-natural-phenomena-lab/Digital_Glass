@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using Walle.Properties;
+using DigitalGlass.Properties;
 
-namespace Walle.Eagle
+namespace DigitalGlass.Eagle
 {
     /// <summary>
     /// Creates an Eagle file that represents the board.

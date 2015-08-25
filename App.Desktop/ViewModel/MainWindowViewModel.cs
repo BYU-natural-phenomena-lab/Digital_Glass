@@ -4,11 +4,14 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
 using Microsoft.Win32;
-using Walle.Annotations;
-using Walle.Eagle;
-using Walle.Model;
+using DigitalGlass.Annotations;
+using DigitalGlass.Eagle;
+using DigitalGlass.Model;
+using DigitalGlass.Commands;
+using System.ComponentModel;
+using System.Windows.Data;
 
-namespace Walle.ViewModel
+namespace DigitalGlass.ViewModel
 {
     /// <summary>
     /// Controls the main window of the application.
@@ -18,6 +21,9 @@ namespace Walle.ViewModel
     {
         private readonly IReadOnlyCollection<CommandViewModel> _commands;
         private IReadOnlyCollection<CommandViewModel> _toolbarCommands;
+        private Collection<Frame> _frames;
+       // private IReadOnlyCollection<Frame> _frames;
+
         private string _coordinates;
         private CanvasHostViewModel _canvasHost;
 
@@ -26,6 +32,9 @@ namespace Walle.ViewModel
         {
             _commands = new ReadOnlyCollection<CommandViewModel>(CreateCommands());
             _toolbarCommands = new ReadOnlyCollection<CommandViewModel>(CreateToolbarCommands());
+            CreateAddFrameCommand();
+            _frames = new Collection<Frame>();
+
         }
 
 
@@ -59,6 +68,45 @@ namespace Walle.ViewModel
         public IReadOnlyCollection<CommandViewModel> Commands
         {
             get { return _commands; }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        //[UsedImplicitly]
+        public Collection<Frame> Frames { get { return _frames; } }
+        // public ObservableCollection<Frame> Frames = new ObservableCollection<Frame>() { new Frame()};
+
+
+        [UsedImplicitly]
+        public ICommand AddFrameCommand
+        {
+            get;
+            internal set;
+        }
+
+        private bool CanExecuteAddFrameCommand(object obj)
+        {
+            return _canvasHost != null;
+        }
+
+        private void CreateAddFrameCommand()
+        {
+            AddFrameCommand = new RelayCommand(AddFrameCommandExecute, CanExecuteAddFrameCommand);
+        }
+
+        public void AddFrameCommandExecute(object obj)
+        {
+            //Code To Create new Frame
+            Frame f = _canvasHost.animation.addCopyOfFrame(_canvasHost.currentFrame);
+            _frames.Add(f);
+            //Move to Frame
+            _canvasHost.moveToFrame(_canvasHost.animation.numFrames() - 1);
+            //Update View
+            ICollectionView view = CollectionViewSource.GetDefaultView(Frames);
+            view.Refresh();
+            view.MoveCurrentToFirst();
+
         }
 
         /// <summary>
@@ -179,6 +227,7 @@ namespace Walle.ViewModel
                 CanvasHost = new CanvasHostViewModel(new Uri(dialog.FileName));
                 ImageLoaded = true;
                 CanClose = true;
+                _frames.Add(new Frame());
             }
         }
 

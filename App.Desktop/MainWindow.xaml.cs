@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using DigitalGlass.ViewModel;
 
-namespace Walle
+namespace DigitalGlass
 {
     public partial class MainWindow : Window
     {
@@ -10,5 +11,6 @@ namespace Walle
         {
             InitializeComponent();
         }
+
     }
 }

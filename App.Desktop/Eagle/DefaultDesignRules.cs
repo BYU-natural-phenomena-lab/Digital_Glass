@@ -1,6 +1,6 @@
 ﻿using System.Xml.Linq;
 
-namespace Walle.Eagle
+namespace DigitalGlass.Eagle
 {
     /// <summary>
     /// Makes sure the circuit design conforms to a set of design rules

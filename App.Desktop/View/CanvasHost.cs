@@ -7,11 +7,11 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using Walle.Annotations;
-using Walle.Model;
-using Walle.ViewModel;
+using DigitalGlass.Annotations;
+using DigitalGlass.Model;
+using DigitalGlass.ViewModel;
 
-namespace Walle.View
+namespace DigitalGlass.View
 {
     /// <summary>
     /// The UI element that draws a CanvasHostViewModel and responds to users clicks.
@@ -56,6 +56,7 @@ namespace Walle.View
             availableSize.Width = Math.Max(0, availableSize.Width - 150); // Provides room for animation bar (size 150)
             return MeasureArrangeHelper(availableSize);
         }
+
         /// <summary>
         /// Updates the view to match a new model. Updates event handlers and listeners.
         /// </summary>
@@ -71,6 +72,8 @@ namespace Walle.View
                 oldDc.Cells.CollectionChanged -= DrawOutline;
                 oldDc.Leds.CollectionChanged -= DrawLed;
                 oldDc.TouchRegions.CollectionChanged -= DrawTouchRegion;
+                //oldDc.Frames.CollectionChanged -= DrawFrames;
+
             }
 
             _viewModel = e.NewValue as CanvasHostViewModel;
@@ -82,6 +85,7 @@ namespace Walle.View
             _viewModel.Cells.CollectionChanged += DrawOutline;
             _viewModel.Leds.CollectionChanged += DrawLed;
             _viewModel.TouchRegions.CollectionChanged += DrawTouchRegion;
+           // _viewModel.Frames.CollectionChanged += DrawFrames;
             UpdateImage();
         }
 
@@ -91,6 +95,11 @@ namespace Walle.View
         }
 
         private void DrawTouchRegion(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            ModelToVisual<TouchRegion>(sender, e, CreateTouchRegtionVisual, ref _leds);
+        }
+
+        private void DrawFrames(object sender, NotifyCollectionChangedEventArgs e)
         {
             ModelToVisual<TouchRegion>(sender, e, CreateTouchRegtionVisual, ref _leds);
         }

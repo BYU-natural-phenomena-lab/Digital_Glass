@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Linq;
 
-namespace Walle.Eagle
+namespace DigitalGlass.Eagle
 {
     /// <summary>
     /// A pacakge is from a library of devices. Example: A surface mount LED 

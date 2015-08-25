@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Walle.Properties {
+namespace DigitalGlass.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

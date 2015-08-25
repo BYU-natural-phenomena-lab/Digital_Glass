@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace Walle.Eagle
+namespace DigitalGlass.Eagle
 {
     /// <summary>
     /// Provides a simple API for creating an EAGLE board from a set of LED locations.

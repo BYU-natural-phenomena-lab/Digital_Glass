@@ -1,9 +1,9 @@
 ﻿using System.Media;
 using System.Windows;
-using Walle.Model;
-using Walle.ViewModel;
+using DigitalGlass.Model;
+using DigitalGlass.ViewModel;
 
-namespace Walle.Commands
+namespace DigitalGlass.Commands
 {
     /// <summary>
     /// Adds a new LED to the model based on the mouseup event

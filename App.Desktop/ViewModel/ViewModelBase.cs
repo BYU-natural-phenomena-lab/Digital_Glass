@@ -2,9 +2,9 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using Walle.Annotations;
+using DigitalGlass.Annotations;
 
-namespace Walle.ViewModel
+namespace DigitalGlass.ViewModel
 {
     /// <summary>
     /// Provides a common set of event handlers for all View Models to use. It also helps validate property names during debugging.

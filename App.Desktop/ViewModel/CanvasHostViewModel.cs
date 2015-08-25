@@ -3,17 +3,18 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Walle.Commands;
-using Walle.Model;
+using DigitalGlass.Commands;
+using DigitalGlass.Model;
 using Point = System.Windows.Point;
 
-namespace Walle.ViewModel
+namespace DigitalGlass.ViewModel
 {
     /// <summary>
     /// The model representing the drawing layer of the canvas. This binds to several models and is responsible for updating the canvas when the model updates.
     /// </summary>
     public class CanvasHostViewModel : ViewModelBase
     {
+        
         private ImageSource _imageSource;
         private Bitmap _image;
         private CanvasHostMode _canvasMode;
@@ -41,11 +42,11 @@ namespace Walle.ViewModel
         /// <param name="uri">The file path to the image to load into the background layer</param>
         public CanvasHostViewModel(Uri uri)
         {
-            animation = Animation.getInstance();
+            animation = Animation.newInstance();
 
             Cells = new ObservableCollection<Cell>();
             Leds = new ObservableCollection<Led>();
-            Frames = new ObservableCollection<Frame>();
+            //Frames = new ObservableCollection<Frame>();
             TouchRegions = new ObservableCollection<TouchRegion>();
 
             currentFrame = 0;
@@ -55,6 +56,8 @@ namespace Walle.ViewModel
             _image = new Bitmap(uri.LocalPath);
             Tolerance = 30;
             _canvasMode = CanvasHostMode.None;
+            BoardHeight = 150;
+
         }
 
         /// <summary>
@@ -164,7 +167,7 @@ namespace Walle.ViewModel
         /// <summary>
         /// Represents the location of all the Frames
         /// </summary>
-        internal ObservableCollection<Frame> Frames { get; private set; }
+       // public ObservableCollection<Frame> Frames { get; private set; }
 
         /// <summary>
         /// Which tool is currently being used. Identifies how to respond to clicks.

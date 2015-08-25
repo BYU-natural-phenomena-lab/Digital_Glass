@@ -1,20 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DigitalGlass.ViewModel;
 
-namespace Walle.Model
+namespace DigitalGlass.Model
 {
-    class Frame
+    public class Frame : ViewModelBase
     {
 
-        int gotoFrame = -1;
-        int timeDelay = 100;
+        public int gotoFrame { get; set; } 
+        public int timeDelay { get; set; }
 
         public Frame()
         {
+            gotoFrame = -1;
+            timeDelay = 100; 
         }
 
         public Frame(Frame toCopy)
@@ -23,7 +27,7 @@ namespace Walle.Model
             this.timeDelay = toCopy.timeDelay;
         }
 
-        public override String ToString()
+        public String ToString()
         {
             return timeDelay + ",\n" + gotoFrame + ",\n\n";
 

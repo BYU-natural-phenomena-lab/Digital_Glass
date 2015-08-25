@@ -1,7 +1,7 @@
 using System;
 using System.Windows.Input;
 
-namespace Walle.ViewModel
+namespace DigitalGlass.ViewModel
 {
     /// <summary>
     /// Representation of a command in the "File" menu.

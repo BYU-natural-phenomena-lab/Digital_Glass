@@ -2,9 +2,9 @@
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
-using Walle.Properties;
+using DigitalGlass.Properties;
 
-namespace Walle.Eagle
+namespace DigitalGlass.Eagle
 {
     /// <summary>
     /// Generates the files for GERBER PCB assembly.

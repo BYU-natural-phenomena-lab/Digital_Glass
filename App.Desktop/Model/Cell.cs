@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Collections.Generic;
 using System;
 
-namespace Walle.Model
+namespace DigitalGlass.Model
 {
     public class Cell
     {

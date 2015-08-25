@@ -1,4 +1,4 @@
-﻿namespace Walle.Eagle
+﻿namespace DigitalGlass.Eagle
 {
     /// <summary>
     /// Represents an element on the PCB. This includes settings about rotation, location, and which kind of package it is.

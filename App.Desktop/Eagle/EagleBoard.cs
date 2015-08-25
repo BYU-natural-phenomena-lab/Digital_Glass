@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Walle.Eagle
+namespace DigitalGlass.Eagle
 {
     /// <summary>
     /// A representation of PCB using Eagle's model

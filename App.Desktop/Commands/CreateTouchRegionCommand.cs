@@ -4,10 +4,10 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Runtime.InteropServices;
 //using System.Windows;
-using Walle.Model;
-using Walle.ViewModel;
+using DigitalGlass.Model;
+using DigitalGlass.ViewModel;
 
-namespace Walle.Commands
+namespace DigitalGlass.Commands
 {
     /// <summary>
     /// Used to select the color a region should be colored
@@ -43,12 +43,6 @@ namespace Walle.Commands
                 a.addTouchRegion(t);
          //   }
        
-
-
-            //Code To Create new Frame
-            //Frame f = _viewModel.animation.addCopyOfFrame(_viewModel.currentFrame);
-            //_viewModel.Frames.Add(f);
-            //_viewModel.moveToFrame(_viewModel.animation.numFrames() - 1);
         }
 
     }

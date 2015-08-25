@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using C5;
 
-namespace Walle.Commands
+namespace DigitalGlass.Commands
 {
     /// <summary>
     /// Finds the boundary. The "magic wand" tool in photoshop. It starts at a given point and searches for the outline of the shape of colors that match the starting point.

@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using System.Windows;
-using Walle.Model;
-using Walle.ViewModel;
+using DigitalGlass.Model;
+using DigitalGlass.ViewModel;
 
-namespace Walle.Commands
+namespace DigitalGlass.Commands
 {
     /// <summary>
     /// Finds the path around the region of color that matches the starting point. Adds the cell to the model.

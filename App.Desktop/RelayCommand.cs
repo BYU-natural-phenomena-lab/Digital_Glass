@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Windows.Input;
 
-namespace Walle
+namespace DigitalGlass
 {
     /// <summary>
     /// A generic helper class used to bind an arbitrary Action to the ICommand interface.

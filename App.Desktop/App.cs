@@ -1,7 +1,7 @@
 ﻿using System.Windows;
-using Walle.ViewModel;
+using DigitalGlass.ViewModel;
 
-namespace Walle
+namespace DigitalGlass
 {
     /// <summary>
     /// Interaction logic for App.xaml

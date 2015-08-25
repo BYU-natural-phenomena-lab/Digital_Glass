@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
-using Walle.ViewModel;
+using DigitalGlass.ViewModel;
 
-namespace Walle.Commands
+namespace DigitalGlass.Commands
 {
     /// <summary>
     /// Maps the canvashost mode into which command to execute on click

@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace Walle.Commands
+namespace DigitalGlass.Commands
 {
     public interface ICanvasHostCommand
     {

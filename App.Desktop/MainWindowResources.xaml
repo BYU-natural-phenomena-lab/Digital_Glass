@@ -1,8 +1,8 @@
 ﻿<!-- This file contains definitions of reusable templates and styles -->
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:vm="clr-namespace:Walle.ViewModel"
-                    xmlns:view="clr-namespace:Walle.View">
+                    xmlns:vm="clr-namespace:DigitalGlass.ViewModel"
+                    xmlns:view="clr-namespace:DigitalGlass.View">
 
     <SolidColorBrush x:Key="MenuGray" Color="#FFF0F0F0" />
     <Style x:Key="ToolbarButtonStyle" TargetType="Button">

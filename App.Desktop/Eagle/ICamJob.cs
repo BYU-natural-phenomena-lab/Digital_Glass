@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Walle.Eagle
+namespace DigitalGlass.Eagle
 {
     /// <summary>
     /// A CAM processing job to be executed. Contains a list of steps to run via eaglecon.exe

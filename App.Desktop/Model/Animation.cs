@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Walle.Model
+namespace DigitalGlass.Model
 {
     class Animation
     {
@@ -21,6 +21,14 @@ namespace Walle.Model
 
             return instance;
         }
+
+        public static Animation newInstance()
+        {
+            instance = new Animation();
+
+            return instance;
+        }
+
         #endregion
 
         private Animation()
@@ -34,7 +42,7 @@ namespace Walle.Model
 
         }
 
-        List<Frame> frames;
+        public  List<Frame> frames {  get; private set; }
         public List<TouchRegion> touchRegions { get; private set; }
 
         public List<Cell> cells { get; private set; }

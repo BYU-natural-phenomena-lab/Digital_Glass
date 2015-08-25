@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace Walle.View
+namespace DigitalGlass.View
 {
     /// <summary>
     /// Thes converter translates between a string and an unsigned integer. Used in WPF to bind to input boxes where the output value must be a uint.

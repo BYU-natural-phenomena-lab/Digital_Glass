@@ -1,4 +1,4 @@
-﻿namespace Walle.Eagle
+﻿namespace DigitalGlass.Eagle
 {
     /// <summary>
     /// Represents one point a signal. <seealso cref="Signal"/>

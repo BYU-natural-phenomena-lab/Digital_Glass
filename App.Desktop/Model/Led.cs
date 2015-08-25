@@ -1,4 +1,4 @@
-﻿namespace Walle.Model
+﻿namespace DigitalGlass.Model
 {
     public class Led
     {
