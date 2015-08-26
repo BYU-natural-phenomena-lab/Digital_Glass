@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DigitalGlass.ViewModel;
+using System.Windows.Media.Imaging;
 
 namespace DigitalGlass.Model
 {
@@ -15,16 +16,29 @@ namespace DigitalGlass.Model
         public int gotoFrame { get; set; } 
         public int timeDelay { get; set; }
 
+        public BitmapImage image = new BitmapImage();
+
+
         public Frame()
         {
             gotoFrame = -1;
-            timeDelay = 100; 
+            timeDelay = 100;
+            createImage();
         }
 
         public Frame(Frame toCopy)
         {
             this.gotoFrame = toCopy.gotoFrame;
             this.timeDelay = toCopy.timeDelay;
+            createImage();
+        }
+
+        void createImage()
+        {
+            image.BeginInit();
+            image.UriSource = new Uri(@"C:\Users\Keith Halterman\AppData\Local\Temp\DigitalGlass_Frame0.png");
+            image.CacheOption = BitmapCacheOption.OnLoad;
+            image.EndInit();
         }
 
         public String ToString()

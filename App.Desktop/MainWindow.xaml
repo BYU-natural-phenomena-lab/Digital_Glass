@@ -53,7 +53,19 @@
             <ListView Width="150" HorizontalAlignment="Right" Background="WhiteSmoke" ItemsSource="{Binding Frames}"  AlternationCount="{Binding Path=Frames.Count}">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Width="45" Header="Frame" DisplayMemberBinding="{Binding AlternationIndex}"/>
+                        <GridViewColumn Width="45" Header="Frame">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Image Source="{Binding image}"/>
+                                    <!--Image>
+                                        <Image.Source>
+                                            <BitmapImage UriSource="C:\Users\Keith Halterman\AppData\Local\Temp\DigitalGlass_Frame1.png"/>
+                                        </Image.Source>
+                                    </>-->
+
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
                         <GridViewColumn Width="47" Header="Time">
                             <GridViewColumn.CellTemplate>
 
@@ -91,6 +103,7 @@
 
                 
             </ListBox>-->
+
         </DockPanel>
         
     </DockPanel>

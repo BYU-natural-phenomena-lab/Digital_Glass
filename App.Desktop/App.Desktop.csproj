@@ -126,7 +126,6 @@
     <Compile Include="ViewModel\CommandViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="ViewModel\ViewModelBase.cs" />
-    <Compile Include="View\AnimationFrameView.cs" />
     <Compile Include="View\CanvasHost.cs" />
     <Compile Include="View\UintConverter.cs" />
     <Compile Include="View\UiServices.cs" />

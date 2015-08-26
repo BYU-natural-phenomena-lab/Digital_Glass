@@ -90,20 +90,57 @@ namespace DigitalGlass.Model
 
         public override string ToString()
         {
+
+            //Create file head
             string output = "";
+            output += "/************************** \n";
+            output += "To run animation, rename this file 'config.h' and drag file into the 'DigitalGlass' arduino project folder \n\n";
+            output += "Config File \n";
+            output += "Here you define cells, frames, animation speed, sensors etc. \n";
+            output += "**************************/ \n";
+            output += "#include \"CapacitiveSensor.h\" \n\n";
+           
+            //Output pin to control LEDs
+            output += "// Which pin on the Arduino is connected to DIN on the led board \n";
+            output += "#define PIN            6 \n\n";
+
+            //Number of LEDs
+            output += "// How many LEDS are there? \n";
+            output += "#define NUMPIXELS  " + totalLeds() +" \n\n";
+
+            //Define Sensors    //TODO: Once the touch sensor gui is complete, add the sensor pins and jumps
+            output += "// define sensors \n";
+            output += "// see http://playground.arduino.cc/Main/CapacitiveSensor?from=Main.CapSense to understand the circuit design \n";
+            output += "#define SENSORS 0 \n";  //Add number of sensors
+            output += "#define SENSOR_SEND_PIN 2 \n\n";
+
+            output += "CapacitiveSensor* sensors[SENSORS]; \n";
+            output += "const unsigned int sensorReceivePins[SENSORS] = { \n\n";
+                //Add sensor Pins
+            output += "}; \n\n";
+
+            //Sensor Jumps
+            output += "// define which which frame number to jump to when sensed \n";
+            output += "const unsigned int sensorJump[SENSORS] = \n";
+            output += "{ \n\n";
+                //Add sensor Jumps
+            output += "}; \n\n";
+
+
+            //Define the Cells
             output += "// define the number of cells \n";
             output += "#define CELLS " + cells.Count + "\n\n";
-
             output += "// define the LED number that begins each group \n";
             output += "const unsigned int cellBoundary[] = { \n";
             output += numLedsInEachCell();
             output += "};\n\n";
 
+            //Define the Frames
             output += "//Define nubmer of frames\n";
             output += "#define FRAMES " + frames.Count + "\n\n"; 
             output += "const unsigned int frameDef[] = {\n";
-            output += outputFrames() + "\n";
-            output += "};\n\n";
+            output += outputFrames();
+            output += "};";
 
             Console.Write(output);
 
@@ -162,6 +199,15 @@ namespace DigitalGlass.Model
                 numPreviousLeds += c.ledCount();
             }
             return output;
+        }
+
+        internal int totalLeds()
+        {
+            int total = 0;
+            foreach (Cell c in cells)
+                total += c.ledCount();
+             
+            return total;
         }
 
         string outputFrames()

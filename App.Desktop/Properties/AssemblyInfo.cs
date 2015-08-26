@@ -6,7 +6,7 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyTitle("Walle")]
+[assembly: AssemblyTitle("Digital Glass")]
 [assembly: AssemblyDescription("GUI for building LED digital stained glass.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("BYU")]

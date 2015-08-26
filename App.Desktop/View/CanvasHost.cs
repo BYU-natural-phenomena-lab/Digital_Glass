@@ -10,6 +10,8 @@ using System.Windows.Media;
 using DigitalGlass.Annotations;
 using DigitalGlass.Model;
 using DigitalGlass.ViewModel;
+using System.Windows.Media.Imaging;
+using System.IO;
 
 namespace DigitalGlass.View
 {
@@ -99,10 +101,6 @@ namespace DigitalGlass.View
             ModelToVisual<TouchRegion>(sender, e, CreateTouchRegtionVisual, ref _leds);
         }
 
-        private void DrawFrames(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            ModelToVisual<TouchRegion>(sender, e, CreateTouchRegtionVisual, ref _leds);
-        }
 
         /// <summary>
         /// Create a visual representation of LEDs
@@ -139,6 +137,16 @@ namespace DigitalGlass.View
         private void DrawOutline(object sender, NotifyCollectionChangedEventArgs e)
         {
             ModelToVisual<Cell>(sender, e, CreateLineVisual, ref _outlines);
+            CreateSaveBitmap(_outlines, "Frame" + _viewModel.currentFrame);
+            updateThumbnails();
+        }
+
+        /// <summary>
+        /// Updates the thumbnails with images to reflect the colors of each frame
+        /// </summary>
+        private void updateThumbnails()
+        {
+
         }
 
         /// <summary>
@@ -270,8 +278,63 @@ namespace DigitalGlass.View
             dc.DrawImage(_viewModel.ImageSource, new Rect(new Size(_viewModel.ImageWidth, _viewModel.ImageHeight)));
             dc.Close();
             _children.Add(bg);
+            
             this.InvalidateVisual();
+
+
         }
+
+
+        private void CreateSaveBitmap(IList<DrawingVisual> visuals, string filename)
+        {
+            RenderTargetBitmap MyRenderTargetBitmap = new RenderTargetBitmap(_viewModel.ImageWidth, _viewModel.ImageHeight, 96, 96, PixelFormats.Default);
+            
+            //Add original image
+            var originalImage = new DrawingVisual();
+            var dc = originalImage.RenderOpen();
+            dc.DrawImage(_viewModel.ImageSource, new Rect(new Size(_viewModel.ImageWidth, _viewModel.ImageHeight)));
+            dc.Close();
+
+            MyRenderTargetBitmap.Render(originalImage);
+
+           
+            //Add each drwaing element
+            foreach (DrawingVisual dv in visuals)
+                MyRenderTargetBitmap.Render(dv);
+
+
+            //Encode
+            PngBitmapEncoder encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(MyRenderTargetBitmap));
+            
+
+            //Save File
+            using (FileStream file = File.Create(Path.Combine(Path.GetTempPath(), "DigitalGlass2_" + filename + ".png")))
+            {
+                encoder.Save(file);
+            }
+        }
+
+            /*
+            RenderTargetBitmap renderBitmap = new RenderTargetBitmap(
+             (int)canvas.Width, (int)canvas.Height,
+             96d, 96d, PixelFormats.Pbgra32);
+            // needed otherwise the image output is black
+            canvas.Measure(new Size((int)canvas.Width, (int)canvas.Height));
+            canvas.Arrange(new Rect(new Size((int)canvas.Width, (int)canvas.Height)));
+
+            renderBitmap.Render(canvas);
+
+            //JpegBitmapEncoder encoder = new JpegBitmapEncoder();
+            PngBitmapEncoder encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(renderBitmap));
+
+            using (FileStream file = File.Create(filename))
+            {
+                encoder.Save(file);
+            }
+        }
+        */
 
         private void CanvasHost_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {

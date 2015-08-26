@@ -10,6 +10,7 @@ using DigitalGlass.Model;
 using DigitalGlass.Commands;
 using System.ComponentModel;
 using System.Windows.Data;
+using System.IO;
 
 namespace DigitalGlass.ViewModel
 {
@@ -109,6 +110,7 @@ namespace DigitalGlass.ViewModel
 
         }
 
+
         /// <summary>
         /// Commands in the "File" menu
         /// </summary>
@@ -124,10 +126,12 @@ namespace DigitalGlass.ViewModel
             {
                 new CommandViewModel("Open...", "Resources/folder_Open_32xLG.png",
                     new RelayCommand(param => this.OpenFile())),
-                new CommandViewModel("Export to Eagle BRD...", null,
-                    new RelayCommand(param => this.ExportEagle(), param => this.ImageLoaded)),
                 new CommandViewModel("Export to Gerber...", null,
                     new RelayCommand(param => this.ExportGerber(), param => this.ImageLoaded)),
+                new CommandViewModel("Export Animation File...", null,
+                    new RelayCommand(param => this.ExportAnimatiion(), param => this.ImageLoaded)),
+                new CommandViewModel("Export Only to Eagle BRD...", null,                 //TODO: This is for Testing and Eventually will be removed from menu options
+                    new RelayCommand(param => this.ExportEagle(), param => this.ImageLoaded)),
                 new CommandViewModel("Close...", new RelayCommand(param => this.CloseFile(), param => this.CanClose)),
                 new CommandViewModel("Exit...", "Resources/Close_16xLG.png", new RelayCommand(param => this.CloseApp())),
             };
@@ -180,6 +184,24 @@ namespace DigitalGlass.ViewModel
             if (result != true) return;
             var exporter = new EagleExporter(dialog.FileName, CreateBoardFromModel());
             exporter.Export();
+        }
+
+
+        /// <summary>
+        /// Exports a .config file that the arduino uses to run the animation
+        /// </summary>
+        private void ExportAnimatiion()
+        {
+            var dialog = new SaveFileDialog();
+            dialog.Filter = "Animation File|*.h";
+            var result = dialog.ShowDialog();
+            if (result != true) return;
+
+            // Create a file to write to. 
+            string createText = Animation.getInstance().ToString();
+            //File.Create(dialog.FileName);
+            File.WriteAllText(dialog.FileName, createText);
+
         }
 
         private IList<CommandViewModel> CreateToolbarCommands()
