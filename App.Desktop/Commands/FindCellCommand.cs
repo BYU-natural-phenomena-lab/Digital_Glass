@@ -54,7 +54,7 @@ namespace DigitalGlass.Commands
 
                 var finder = new RegionFinder(_viewModel.Image, pt, _viewModel.Tolerance);
                 finder.LineFound +=
-                    line => _viewModel.Cells.Add(new Cell(line.Select(p => new Point(p.X, p.Y)).ToArray(), animation.numFrames(), _viewModel.currentFrame, colorDlg.Color ));
+                    line => _viewModel.Cells.Add(new Cell(line.Select(p => new Point(p.X, p.Y)).ToArray(), animation.numFrames(), _viewModel.currentFrame, fillColor));
                 finder.Process();
 
                 //Add to the Model

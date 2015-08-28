@@ -28,7 +28,7 @@ namespace DigitalGlass.Model
             this.Points = Points;
             this.color = new List<Color>();
             for (int i = 0; i < numFrames; i++)
-                this.color.Add(Color.Black);
+                this.color.Add(System.Drawing.Color.FromArgb(0, 0, 0, 0)); //Transparent White
             
             this.color[curFrame] = color;
         }

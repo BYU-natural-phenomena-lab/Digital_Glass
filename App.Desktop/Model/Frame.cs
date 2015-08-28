@@ -15,14 +15,17 @@ namespace DigitalGlass.Model
 
         public int gotoFrame { get; set; } 
         public int timeDelay { get; set; }
+        public int index { get; set; }
 
         public BitmapImage image = new BitmapImage();
 
+        public Boolean selected = false;
 
         public Frame()
         {
             gotoFrame = -1;
             timeDelay = 100;
+            index = 0;
             createImage();
         }
 
@@ -30,6 +33,7 @@ namespace DigitalGlass.Model
         {
             this.gotoFrame = toCopy.gotoFrame;
             this.timeDelay = toCopy.timeDelay;
+            this.index = toCopy.index + 1;
             createImage();
         }
 

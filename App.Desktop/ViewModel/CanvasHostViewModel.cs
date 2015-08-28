@@ -14,7 +14,7 @@ namespace DigitalGlass.ViewModel
     /// </summary>
     public class CanvasHostViewModel : ViewModelBase
     {
-        
+        public static CanvasHostViewModel self;
         private ImageSource _imageSource;
         private Bitmap _image;
         private CanvasHostMode _canvasMode;
@@ -31,6 +31,27 @@ namespace DigitalGlass.ViewModel
             if (currentFrame == frameNum) return;
 
             currentFrame = frameNum;
+            //TODO: Need a way to tell the view to change to show new colors for each cell
+
+
+
+            ObservableCollection<Cell> tempCells = new ObservableCollection<Cell>();
+            foreach(Cell c in Cells)
+            {
+                tempCells.Add(c);
+            }
+
+           // Cells = new ObservableCollection<Cell>();
+            foreach (Cell c in tempCells)
+            {
+                Cells.Remove(c);
+            }
+
+            foreach (Cell c in tempCells)
+            {
+                Cells.Add(c);
+            }            
+
             OnPropertyChanged();
 
         }
@@ -42,6 +63,7 @@ namespace DigitalGlass.ViewModel
         /// <param name="uri">The file path to the image to load into the background layer</param>
         public CanvasHostViewModel(Uri uri)
         {
+            self = this;
             animation = Animation.newInstance();
 
             Cells = new ObservableCollection<Cell>();

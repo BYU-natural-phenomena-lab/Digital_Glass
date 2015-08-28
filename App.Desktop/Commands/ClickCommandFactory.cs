@@ -22,7 +22,7 @@ namespace DigitalGlass.Commands
                     return new CreateTouchRegionCommand(viewModel);
 
                 case CanvasHostMode.PlaceLEDWithoutCell:
-                    return new FindCellCommand(viewModel, Color.Black);
+                    return new FindCellCommand(viewModel, System.Drawing.Color.FromArgb(0, 0, 0, 0)); //Transparent white
 
                 case CanvasHostMode.None:
                 default:

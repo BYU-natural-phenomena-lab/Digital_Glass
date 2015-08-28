@@ -23,7 +23,6 @@ namespace DigitalGlass.Commands
             if (!a.PointInCell(startClick))
             {
                 //Create Cell to Place LED in
-                SystemSounds.Beep.Play();
                 var command = CanvasHostCommandFactory.Create(_viewModel, CanvasHostMode.PlaceLEDWithoutCell);
                 command.Execute(startClick, endClick);
 

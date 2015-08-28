@@ -50,13 +50,19 @@
             </view:CanvasHost>
 
             <Button HorizontalAlignment="Right" Width="150" VerticalAlignment="Bottom" DockPanel.Dock="Bottom"  Command="{Binding Path=AddFrameCommand}">Add Frame</Button>
-            <ListView Width="150" HorizontalAlignment="Right" Background="WhiteSmoke" ItemsSource="{Binding Frames}"  AlternationCount="{Binding Path=Frames.Count}">
+            <ListView Name="ThumbnailView" Width="150" HorizontalAlignment="Right" Background="WhiteSmoke" ItemsSource="{Binding Frames}" SelectionChanged="Selector_OnSelectionChanged" SelectedIndex="{Binding Path=SelectedIndexValue}">
+                <!--<ListView.ItemContainerStyle>
+                     <Style TargetType="ListViewItem">
+                        <Setter Property="IsSelected" Value="{Binding selected}"/>
+                    </Style>
+                </ListView.ItemContainerStyle>-->
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Width="45" Header="Frame">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Image Source="{Binding image}"/>
+                                    <TextBlock Text="{Binding index, BindsDirectlyToSource=True, Mode=TwoWay}"/>
+                                    <!--Image Source="{Binding image}"/-->
                                     <!--Image>
                                         <Image.Source>
                                             <BitmapImage UriSource="C:\Users\Keith Halterman\AppData\Local\Temp\DigitalGlass_Frame1.png"/>

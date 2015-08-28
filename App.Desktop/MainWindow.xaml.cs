@@ -12,5 +12,10 @@ namespace DigitalGlass
             InitializeComponent();
         }
 
+        private void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            int index = ((System.Windows.Controls.ListView)e.OriginalSource).SelectedIndex;
+            CanvasHostViewModel.self.moveToFrame(index);
+        }
     }
 }
